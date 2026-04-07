@@ -8,6 +8,7 @@ import Dashboard from "./components/Dashboard";
 import PrivateRoute from "./Private/PrivateRoutes";
 import Leaderboard from "./pages/Leaderboard/Leaderboard";
 import NotFound from "./pages/404/NotFound";
+import ContestDetails from "./pages/Contests/ContestDetails";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,14 @@ const router = createBrowserRouter([
       {
         path: "/leaderboard",
         element: <Leaderboard></Leaderboard>,
+      },
+      {
+        path: "/contest-details/:id",
+        element: (
+          <PrivateRoute>
+            <ContestDetails></ContestDetails>
+          </PrivateRoute>
+        ),
       },
       {
         path: "*",
