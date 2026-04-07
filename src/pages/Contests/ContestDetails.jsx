@@ -134,7 +134,7 @@ function ContestDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0c0b18] text-white p-6">
+    <div className="min-h-screen pt-55 pb-4 back text-white p-6">
       <div className="max-w-5xl mx-auto">
         <div className="grid md:grid-cols-2 gap-6 items-center">
           <img
