@@ -40,7 +40,7 @@ const Signup = () => {
       setRegistering(true);
       await createUser(email, password);
       await updateUserProfile(displayName, photoURL);
-      await fetch("https://habit-tracker-server-taupe.vercel.app/users", {
+      await fetch("http://localhost:3000/users", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -65,7 +65,7 @@ const Signup = () => {
       setRegistering(true);
       const result = await signInWithGoogle();
       const user = result.user;
-      await fetch("https://habit-tracker-server-taupe.vercel.app/users", {
+      await fetch("http://localhost:3000/users", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({

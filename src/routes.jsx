@@ -4,6 +4,8 @@ import Home from "./pages/home/Home";
 import Contests from "./pages/Contests/Contests";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
+import Dashboard from "./components/Dashboard";
+import PrivateRoute from "./Private/PrivateRoutes";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +28,14 @@ const router = createBrowserRouter([
       {
         path: "/sign-up",
         element: <Signup></Signup>,
+      },
+      {
+        path: "/dashboard",
+        element: (
+          <PrivateRoute>
+            <Dashboard></Dashboard>
+          </PrivateRoute>
+        ),
       },
     ],
   },

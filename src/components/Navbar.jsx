@@ -1,8 +1,25 @@
-import React from "react";
-import { NavLink } from "react-router";
+import React, { useContext, useState } from "react";
+import { Navigate, NavLink } from "react-router";
 import logo from "../assets/logo1.png";
+import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
+  const { user, signOutUser } = useContext(AuthContext);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleLogout = () => {
+    signOutUser()
+      .then(() => {
+        setDropdownOpen(false);
+        toast.success("Logged out successfully");
+        Navigate("/");
+      })
+      .catch((err) => {
+        toast.error("Logout failed: " + err.message);
+      });
+  };
+
   return (
     <div className="navbar shadow-sm relative">
       <div className="dropdown lg:hidden">
@@ -59,35 +76,52 @@ const Navbar = () => {
       </div>
 
       <div className="flex-1 flex justify-end">
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost btn-circle avatar"
-          >
-            <div className="w-10 rounded-full">
+        <div className="navbar-end flex items-center gap-3">
+          {user ? (
+            <div className="relative">
               <img
-                alt="User avatar"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                src={user.photoURL}
+                alt={user.displayName || "User"}
+                className="w-10 h-10 rounded-full cursor-pointer"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
               />
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg z-50 p-4">
+                  <p className="text-sm font-semibold text-gray-700 mb-2">
+                    {user.displayName || "No Name"}
+                  </p>
+                  <p className="text-sm text-gray-500 mb-4">{user.email}</p>
+                  <NavLink to="/dashboard">
+                    <button className="btn btn-sm w-full bg-[#625FA3] mb-5">
+                      {" "}
+                      Dashboard
+                    </button>
+                  </NavLink>
+                  <button
+                    onClick={handleLogout}
+                    className="btn btn-sm w-full bg-red-500 text-white hover:bg-red-700"
+                  >
+                    Log Out
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
-          <ul
-            tabIndex="-1"
-            className="menu menu-sm dropdown-content rounded-box z-50 mt-3 w-52 p-2 shadow bg-base-100"
-          >
-            <li>
-              <NavLink to="/profile" className="justify-between">
-                Profile
+          ) : (
+            <div className="flex items-center gap-2">
+              <NavLink to="/login">
+                <button className="btn bg-green-600 text-white hover:bg-green-700">
+                  Log In
+                </button>
               </NavLink>
-            </li>
-            <li>
-              <NavLink to="/dashboard">Dashboard</NavLink>
-            </li>
-            <li>
-              <a>Logout</a>
-            </li>
-          </ul>
+
+              <NavLink to="/sign-up">
+                <button className="btn bg-purple-600 text-white hover:bg-purple-700">
+                  Sign Up
+                </button>
+              </NavLink>
+            </div>
+          )}
         </div>
       </div>
     </div>
