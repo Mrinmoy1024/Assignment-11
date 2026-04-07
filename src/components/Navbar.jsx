@@ -47,7 +47,7 @@ const Navbar = () => {
             <NavLink to="/">Homepage</NavLink>
           </li>
           <li>
-            <NavLink to="/contests">Contest</NavLink>
+            <NavLink to="/all-contests">Contest</NavLink>
           </li>
           <li>
             <NavLink to="/leader-board">Leader Board</NavLink>
@@ -67,7 +67,7 @@ const Navbar = () => {
             <NavLink to="/">Homepage</NavLink>
           </li>
           <li>
-            <NavLink to="/contests">Contest</NavLink>
+            <NavLink to="/all-contests">Contest</NavLink>
           </li>
           <li>
             <NavLink to="/leader-board">Leader Board</NavLink>
@@ -100,7 +100,7 @@ const Navbar = () => {
                   </NavLink>
                   <button
                     onClick={handleLogout}
-                    className="btn btn-sm w-full bg-red-500 text-white hover:bg-red-700"
+                    className="btn btn-sm w-full bg-red-500 text-white hover:bg-red-700 "
                   >
                     Log Out
                   </button>
@@ -110,7 +110,7 @@ const Navbar = () => {
           ) : (
             <div className="flex items-center gap-2">
               <NavLink to="/login">
-                <button className="btn text-white hover:bg-[#bd0e97]">
+                <button className="btn text-white  hover:bg-[#bd0e97]">
                   Log In
                 </button>
               </NavLink>

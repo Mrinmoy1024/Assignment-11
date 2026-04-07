@@ -112,8 +112,8 @@ const Contests = () => {
                 onClick={() => handleFilter(type)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition border ${
                   filterType === type
-                    ? "!bg-[#C15B9C] !border-[#C15B9C] text-white"
-                    : "!bg-transparent !border-[#2a2a38] text-gray-400 hover:!border-[#C15B9C]"
+                    ? "bg-[#C15B9C] border-[#C15B9C] text-white"
+                    : "bg-transparent border-[#2a2a38] text-gray-400 hover:border-[#C15B9C]"
                 }`}
               >
                 {type}
@@ -124,7 +124,7 @@ const Contests = () => {
           <select
             value={sortBy}
             onChange={(e) => handleSort(e.target.value)}
-            className="!bg-[#1c1c26] !border !border-[#2a2a38] text-gray-300 text-sm rounded-lg px-3 py-2 outline-none focus:!border-[#C15B9C] transition"
+            className="bg-[#1c1c26] border border-[#2a2a38] text-gray-300 text-sm rounded-lg px-3 py-2 outline-none focus:border-[#C15B9C] transition"
           >
             {sortOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -144,7 +144,7 @@ const Contests = () => {
             return (
               <div
                 key={contest.id}
-                className="!bg-[#1c1c26] !border !border-[#2a2a38] rounded-2xl overflow-hidden flex flex-col hover:!border-[#C15B9C] transition group"
+                className="bg-[#1c1c26] border border-[#2a2a38] rounded-2xl overflow-hidden flex flex-col hover:border-[#C15B9C] transition group"
               >
                 <div className="relative h-40 overflow-hidden">
                   <img
@@ -160,7 +160,7 @@ const Contests = () => {
                     {contest.contestType}
                   </span>
 
-                  <span className="absolute top-3 right-3 text-[10px] !bg-black/60 text-white px-2 py-1 rounded-full">
+                  <span className="absolute top-3 right-3 text-[10px] bg-black/60 text-white px-2 py-1 rounded-full">
                     {daysLeft > 0 ? `${daysLeft}d left` : "Closing soon"}
                   </span>
                 </div>
@@ -207,7 +207,7 @@ const Contests = () => {
 
                   <button
                     onClick={() => navigate(`/contest-details/${contest.id}`)}
-                    className="w-full !bg-[#C15B9C] hover:!bg-[#a84d87] text-white text-xs font-semibold py-2 rounded-lg transition"
+                    className="w-full bg-[#C15B9C] hover:bg-[#a84d87] text-white text-xs font-semibold py-2 rounded-lg transition"
                   >
                     View Details
                   </button>
@@ -222,7 +222,7 @@ const Contests = () => {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="px-3 py-1.5 rounded-lg text-sm !bg-[#1c1c26] !border !border-[#2a2a38] text-gray-400 hover:!border-[#C15B9C] disabled:opacity-30 disabled:cursor-not-allowed transition"
+              className="px-3 py-1.5 rounded-lg text-sm bg-[#1c1c26] border border-[#2a2a38] text-gray-400 hover:border-[#C15B9C] disabled:opacity-30 disabled:cursor-not-allowed transition"
             >
               ←
             </button>
@@ -231,10 +231,10 @@ const Contests = () => {
               <button
                 key={page}
                 onClick={() => handlePageChange(page)}
-                className={`px-3 py-1.5 rounded-lg text-sm transition !border ${
+                className={`px-3 py-1.5 rounded-lg text-sm transition border ${
                   currentPage === page
-                    ? "!bg-[#df16e6] !border-[#C15B9C] text-white"
-                    : "!bg-[#1c1c26] !border-[#2a2a38] text-gray-400 hover:!border-[#C15B9C]"
+                    ? "bg-[#df16e6] border-[#C15B9C] text-white"
+                    : "bg-[#1c1c26] border-[#2a2a38] text-gray-400 hover:border-[#C15B9C]"
                 }`}
               >
                 {page}
@@ -244,7 +244,7 @@ const Contests = () => {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="px-3 py-1.5 rounded-lg text-sm !bg-[#1c1c26] !border !border-[#2a2a38] text-gray-400 hover:!border-[#C15B9C] disabled:opacity-30 disabled:cursor-not-allowed transition"
+              className="px-3 py-1.5 rounded-lg text-sm bg-[#1c1c26] border border-[#2a2a38] text-gray-400 hover:border-[#C15B9C] disabled:opacity-30 disabled:cursor-not-allowed transition"
             >
               →
             </button>

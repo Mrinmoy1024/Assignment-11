@@ -17,7 +17,7 @@ const router = createBrowserRouter([
         element: <Home></Home>,
       },
       {
-        path: "/contests",
+        path: "/all-contests",
         element: <Contests></Contests>,
       },
 
