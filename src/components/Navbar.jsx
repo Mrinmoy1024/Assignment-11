@@ -110,13 +110,13 @@ const Navbar = () => {
           ) : (
             <div className="flex items-center gap-2">
               <NavLink to="/login">
-                <button className="btn bg-green-600 text-white hover:bg-green-700">
+                <button className="btn text-white hover:bg-[#bd0e97]">
                   Log In
                 </button>
               </NavLink>
 
               <NavLink to="/sign-up">
-                <button className="btn bg-purple-600 text-white hover:bg-purple-700">
+                <button className="btn  text-white hover:bg-purple-700">
                   Sign Up
                 </button>
               </NavLink>

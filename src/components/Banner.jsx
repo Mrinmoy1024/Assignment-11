@@ -71,9 +71,6 @@ const Banner = () => {
                       ${contest.prizeMoney?.toLocaleString()}
                     </strong>
                   </span>
-                  <Link to="/contests">
-                    <button className="btn-1">View all</button>
-                  </Link>
                 </div>
               </div>
             </motion.div>

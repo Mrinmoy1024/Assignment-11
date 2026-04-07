@@ -11,3 +11,6 @@ body {
   border-radius: 15%;
 }
 
+.back {
+  background: linear-gradient(90deg, #625FA3, #C15B9C, #6EB18E);
+}
