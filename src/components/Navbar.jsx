@@ -50,7 +50,7 @@ const Navbar = () => {
             <NavLink to="/all-contests">Contest</NavLink>
           </li>
           <li>
-            <NavLink to="/leader-board">Leader Board</NavLink>
+            <NavLink to="/leaderboard">Leader Board</NavLink>
           </li>
         </ul>
       </div>
@@ -70,7 +70,7 @@ const Navbar = () => {
             <NavLink to="/all-contests">Contest</NavLink>
           </li>
           <li>
-            <NavLink to="/leader-board">Leader Board</NavLink>
+            <NavLink to="/leaderboard">Leader Board</NavLink>
           </li>
         </ul>
       </div>

@@ -6,6 +6,7 @@ import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
 import Dashboard from "./components/Dashboard";
 import PrivateRoute from "./Private/PrivateRoutes";
+import Leaderboard from "./pages/Leaderboard/Leaderboard";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
             <Dashboard></Dashboard>
           </PrivateRoute>
         ),
+      },
+      {
+        path: "/leaderboard",
+        element: <Leaderboard></Leaderboard>,
       },
     ],
   },
