@@ -4,3 +4,9 @@
 body {
   background: linear-gradient(90deg, #625FA3, #C15B9C, #6EB18E);
 }
+
+.btn-1 {
+  background: linear-gradient(90deg, #625FA3, #C15B9C, #6EB18E);
+  padding: 15px;
+  border-radius: 15%;
+}

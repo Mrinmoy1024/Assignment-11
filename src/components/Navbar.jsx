@@ -30,7 +30,7 @@ const Navbar = () => {
             <NavLink to="/">Homepage</NavLink>
           </li>
           <li>
-            <NavLink to="/contest">Contest</NavLink>
+            <NavLink to="/contests">Contest</NavLink>
           </li>
           <li>
             <NavLink to="/leader-board">Leader Board</NavLink>
@@ -50,7 +50,7 @@ const Navbar = () => {
             <NavLink to="/">Homepage</NavLink>
           </li>
           <li>
-            <NavLink to="/contest">Contest</NavLink>
+            <NavLink to="/contests">Contest</NavLink>
           </li>
           <li>
             <NavLink to="/leader-board">Leader Board</NavLink>
