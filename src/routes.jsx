@@ -7,6 +7,7 @@ import Signup from "./pages/signup/Signup";
 import Dashboard from "./components/Dashboard";
 import PrivateRoute from "./Private/PrivateRoutes";
 import Leaderboard from "./pages/Leaderboard/Leaderboard";
+import NotFound from "./pages/404/NotFound";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       {
         path: "/leaderboard",
         element: <Leaderboard></Leaderboard>,
+      },
+      {
+        path: "*",
+        element: <NotFound></NotFound>,
       },
     ],
   },
