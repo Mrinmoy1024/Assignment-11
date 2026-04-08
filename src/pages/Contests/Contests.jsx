@@ -28,7 +28,7 @@ const sortOptions = [
 ];
 
 const fetchContests = async () => {
-  const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/contest`);
+  const { data } = await axios.get(`http://localhost:3000/contest`);
   return Array.isArray(data) ? data : [];
 };
 

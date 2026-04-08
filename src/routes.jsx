@@ -8,7 +8,8 @@ import PrivateRoute from "./Private/PrivateRoutes";
 import Leaderboard from "./pages/Leaderboard/Leaderboard";
 import NotFound from "./pages/404/NotFound";
 import ContestDetails from "./pages/Contests/ContestDetails";
-import DashboardLayout from "./layout/DashboardLayout";
+
+import Dashboard from "./pages/Dashboard/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
         element: <NotFound></NotFound>,
       },
     ],
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard></Dashboard>,
   },
 ]);
 

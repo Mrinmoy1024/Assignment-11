@@ -4,38 +4,71 @@ import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import axios from "axios";
 
 const Login = () => {
   const { signInUser, signInWithGoogle } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogIn = (event) => {
+  // ✅ shared function to get and save JWT
+  const saveToken = async (email) => {
+    const { data } = await axios.post("http://localhost:3000/jwt", { email });
+    localStorage.setItem("token", data.token);
+  };
+
+  const handleLogIn = async (event) => {
     event.preventDefault();
     const email = event.target.email.value;
     const password = event.target.password.value;
-    signInUser(email, password)
-      .then(() => {
-        event.target.reset();
-        navigate(location.state?.from || "/");
-        toast.success("Logged in successfully!", { id: "create-user" });
-      })
-      .catch((error) => console.log(error));
+
+    try {
+      setLoading(true);
+      await signInUser(email, password);
+      await saveToken(email); // ✅ save JWT after login
+      event.target.reset();
+      toast.success("Logged in successfully!");
+      navigate(location.state?.from || "/");
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleGoogleSignIn = () => {
-    signInWithGoogle()
-      .then(() => {
-        navigate(location.state?.from || "/");
-        toast.success("Logged in successfully!", { id: "create-user" });
-      })
-      .catch((error) => console.log(error));
+  const handleGoogleSignIn = async () => {
+    try {
+      setLoading(true);
+      const result = await signInWithGoogle();
+      const { email } = result.user;
+      await saveToken(email); // ✅ save JWT after Google login
+      toast.success("Logged in successfully!");
+      navigate(location.state?.from || "/");
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{
+          background: "linear-gradient(90deg, #625FA3, #C15B9C, #6EB18E)",
+        }}
+      >
+        <span className="loading loading-spinner loading-lg text-white" />
+      </div>
+    );
+  }
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center  px-4"
+      className="min-h-screen flex items-center justify-center px-4"
       style={{
         background: "linear-gradient(90deg, #625FA3, #C15B9C, #6EB18E)",
       }}
@@ -105,7 +138,7 @@ const Login = () => {
         <p className="text-center text-xs text-gray-500 mt-6">
           New here?{" "}
           <Link
-            to="/register"
+            to="/sign-up"
             className="text-[#C15B9C] hover:underline font-medium"
           >
             Create an account
