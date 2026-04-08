@@ -42,7 +42,7 @@ const Login = () => {
     >
       <div className="w-full max-w-sm bg-[#721f75] rounded-2xl p-8 border border-[#5f115f]">
         <h1 className="text-2xl font-bold text-white text-center mb-1">
-          Sign In
+          Login
         </h1>
         <p className="text-center text-gray-400 text-sm mb-7">Welcome back</p>
 

@@ -17,6 +17,7 @@ const Navbar = () => {
       })
       .catch((err) => {
         toast.error("Logout failed: " + err.message);
+        console.error(err);
       });
   };
 

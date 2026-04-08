@@ -5,10 +5,13 @@ import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
+import { auth } from "../../firebase/firebase.config";
+import { signOut } from "firebase/auth";
 
 const Signup = () => {
   const { createUser, updateUserProfile, signInWithGoogle } =
     useContext(AuthContext);
+
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [registering, setRegistering] = useState(false);
@@ -23,20 +26,39 @@ const Signup = () => {
     return null;
   };
 
+  const checkEmailExists = async (email) => {
+    try {
+      await axios.get(`http://localhost:3000/users/check?email=${email}`);
+      return false;
+    } catch (error) {
+      if (error.response?.status === 409) return true;
+      throw error;
+    }
+  };
+
   const saveUserToDb = async ({ name, email, photoURL, role }) => {
-    await axios.post("http://localhost:3000/users", {
-      name,
-      email,
-      photoURL,
-      role, 
-      createdAt: new Date(),
-      
-    });
-     console.log("Server response:", saveUserToDb);
+    try {
+      await axios.post("http://localhost:3000/users", {
+        name,
+        email,
+        photoURL,
+        role,
+        createdAt: new Date(),
+      });
+    } catch (error) {
+      if (error.response?.status === 409) {
+        throw new Error("duplicate");
+      }
+      throw error;
+    }
+
+    const { data } = await axios.post("http://localhost:3000/jwt", { email });
+    localStorage.setItem("token", data.token);
   };
 
   const handleRegister = async (event) => {
     event.preventDefault();
+
     const displayName = event.target.displayName.value;
     const photoURL = event.target.photoURL.value;
     const email = event.target.email.value;
@@ -50,20 +72,31 @@ const Signup = () => {
 
     try {
       setRegistering(true);
+
+      const emailTaken = await checkEmailExists(email);
+      if (emailTaken) {
+        toast.error(
+          "This email is already registered. Please sign in instead.",
+        );
+        navigate("/login");
+        return;
+      }
+
       await createUser(email, password);
       await updateUserProfile(displayName, photoURL);
       await saveUserToDb({
         name: displayName,
         email,
         photoURL,
-        role: "general user", 
+        role: "general user",
       });
-      toast.success("Account created successfully!");
+
+      toast.success("Welcome! 🎉");
       navigate("/");
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message, {
-        id: "create-user",
-      });
+      if (error.message !== "duplicate") {
+        toast.error(error.response?.data?.message || error.message);
+      }
     } finally {
       setRegistering(false);
     }
@@ -72,20 +105,31 @@ const Signup = () => {
   const handleGoogleSignIn = async () => {
     try {
       setRegistering(true);
+
       const result = await signInWithGoogle();
       const { displayName, email, photoURL } = result.user;
+
+      const emailTaken = await checkEmailExists(email);
+      if (emailTaken) {
+        await signOut(auth);
+        toast.error("This email is already registered. Please login instead.");
+        navigate("/login");
+        return;
+      }
+
       await saveUserToDb({
         name: displayName,
         email,
         photoURL,
-        role: "general user", 
+        role: "general user",
       });
-      toast.success("Account created successfully!", { id: "create-user" });
+
+      toast.success("Welcome! 🎉");
       navigate("/");
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message, {
-        id: "create-user",
-      });
+      if (error.message !== "duplicate") {
+        toast.error(error.response?.data?.message || error.message);
+      }
     } finally {
       setRegistering(false);
     }
@@ -101,7 +145,7 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-brand-gradient px-4">
-      <div className="w-full max-w-sm !bg-[#721f75] rounded-2xl p-8 !border !border-[#5f115f]">
+      <div className="w-full max-w-sm bg-[#721f75] rounded-2xl p-8 border border-[#5f115f]">
         <h1 className="text-2xl font-bold text-white text-center mb-1">
           Create Account
         </h1>
@@ -113,29 +157,33 @@ const Signup = () => {
             name="displayName"
             placeholder="Full Name"
             required
-            className="w-full !bg-[#252533] !border !border-[#2a2a38] focus:!border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm outline-none transition"
+            className="w-full bg-[#252533] border border-[#2a2a38] focus:border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm outline-none transition"
           />
+
           <input
             type="text"
             name="photoURL"
             placeholder="Photo URL (optional)"
-            className="w-full !bg-[#252533] !border !border-[#2a2a38] focus:!border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm outline-none transition"
+            className="w-full bg-[#252533] border border-[#2a2a38] focus:border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm outline-none transition"
           />
+
           <input
             type="email"
             name="email"
             placeholder="Email"
             required
-            className="w-full !bg-[#252533] !border !border-[#2a2a38] focus:!border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm outline-none transition"
+            className="w-full bg-[#252533] border border-[#2a2a38] focus:border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm outline-none transition"
           />
+
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
               required
-              className="w-full !bg-[#252533] !border !border-[#2a2a38] focus:!border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 pr-10 text-sm outline-none transition"
+              className="w-full bg-[#252533] border border-[#2a2a38] focus:border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 pr-10 text-sm outline-none transition"
             />
+
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
@@ -144,27 +192,26 @@ const Signup = () => {
               {showPassword ? <FaEyeSlash size={15} /> : <FaEye size={15} />}
             </button>
           </div>
+
           <button
             type="submit"
-            className="w-full !bg-[#C15B9C] hover:!bg-[#a84d87] text-white font-semibold py-2.5 rounded-lg text-sm transition"
+            className="w-full bg-[#C15B9C] hover:bg-[#a84d87] text-white font-semibold py-2.5 rounded-lg text-sm transition"
           >
             Create Account
           </button>
         </form>
 
         <div className="flex items-center gap-3 my-5">
-          <div className="flex-1 h-px !bg-[#5f115f]" />
+          <div className="flex-1 h-px bg-[#5f115f]" />
           <span className="text-xs text-gray-500">or</span>
-          <div className="flex-1 h-px !bg-[#5f115f]" />
+          <div className="flex-1 h-px bg-[#5f115f]" />
         </div>
 
         <button
           onClick={handleGoogleSignIn}
-          className="w-full flex items-center justify-center gap-2 !bg-[#252533] !border !border-[#2a2a38] hover:!border-[#C15B9C] text-gray-300 py-2.5 rounded-lg text-sm transition"
+          className="w-full flex items-center justify-center gap-2 bg-[#252533] border border-[#2a2a38] hover:border-[#C15B9C] text-gray-300 py-2.5 rounded-lg text-sm transition"
         >
-          <span className="pointer-events-none">
-            <FcGoogle size={18} />
-          </span>
+          <FcGoogle size={18} />
           Continue with Google
         </button>
 
