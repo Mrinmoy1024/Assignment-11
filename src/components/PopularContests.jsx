@@ -17,7 +17,7 @@ const typeColors = {
 };
 
 const fetchContests = async () => {
-  const { data } = await axios.get("http://localhost:3000/contest");
+  const { data } = await axios.get(`http://localhost:3000/contest`);
   return Array.isArray(data)
     ? [...data]
         .sort((a, b) => b.participantCount - a.participantCount)

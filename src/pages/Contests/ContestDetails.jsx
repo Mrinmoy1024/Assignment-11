@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import axiosSecure from "../../Hooks/axiosSecure";
 
 function useCountdown(deadline) {
   const [timeLeft, setTimeLeft] = useState(null);
@@ -10,13 +9,16 @@ function useCountdown(deadline) {
 
   useEffect(() => {
     if (!deadline) return;
+
     const calc = () => {
       const diff = new Date(deadline) - new Date();
+
       if (diff <= 0) {
         setEnded(true);
         setTimeLeft(null);
         return;
       }
+
       setTimeLeft({
         d: Math.floor(diff / 86400000),
         h: Math.floor((diff % 86400000) / 3600000),
@@ -24,6 +26,7 @@ function useCountdown(deadline) {
         s: Math.floor((diff % 60000) / 1000),
       });
     };
+
     calc();
     const id = setInterval(calc, 1000);
     return () => clearInterval(id);
@@ -55,9 +58,10 @@ function SubmitModal({ onClose, onSubmit }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-      <div className="bg-[#1a1830] p-6 rounded-xl w-full max-w-md">
+    <div className="fixed inset-0 back flex items-center justify-center z-50">
+      <div className="back p-6 rounded-xl w-full max-w-md">
         <h2 className="text-lg font-bold mb-3 text-white">Submit Task</h2>
+
         <textarea
           className="w-full p-3 rounded bg-black/30 text-white mb-3"
           rows={4}
@@ -65,6 +69,7 @@ function SubmitModal({ onClose, onSubmit }) {
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
+
         <div className="flex justify-end gap-2">
           <button onClick={onClose} className="px-3 py-1 bg-gray-500 rounded">
             Cancel
@@ -82,7 +87,7 @@ function SubmitModal({ onClose, onSubmit }) {
 }
 
 const fetchContestById = async (id) => {
-  const { data } = await axios.get("http://localhost:3000/contest");
+  const { data } = await axiosSecure.get("/contest");
   return data.find((c) => String(c._id) === id || String(c.id) === id) ?? null;
 };
 
@@ -95,12 +100,10 @@ function ContestDetails() {
   const [showModal, setShowModal] = useState(false);
 
   const { data: contest, isLoading } = useQuery({
-    queryKey: ["contests", id],
+    queryKey: ["contest", id],
     queryFn: () => fetchContestById(id),
-    staleTime: 1000 * 60 * 2,
   });
 
-  
   useEffect(() => {
     if (contest && participants === null) {
       setParticipants(contest.participants ?? 0);
@@ -111,18 +114,30 @@ function ContestDetails() {
 
   const handleRegister = () => {
     if (ended) return;
+
     setIsRegistered(true);
     setParticipants((p) => p + 1);
+
     navigate(`/payment/${id}`);
   };
 
-  const handleTaskSubmit = (data) => {
-    console.log("Submitted:", data);
+  const handleTaskSubmit = async (taskData) => {
+    try {
+      await axiosSecure.post("/submit-task", {
+        contestId: id,
+        submission: taskData,
+      });
+
+      alert("Task submitted successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to submit task");
+    }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0c0b18]">
+      <div className="min-h-screen flex items-center justify-center back">
         <div className="w-12 h-12 border-4 border-[#625FA3] border-t-[#C15B9C] rounded-full animate-spin" />
       </div>
     );
@@ -130,14 +145,14 @@ function ContestDetails() {
 
   if (!contest) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0c0b18]">
+      <div className="min-h-screen flex items-center justify-center back">
         <p className="text-[#C15B9C]">Contest not found</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-55 pb-4 back text-white p-6">
+    <div className="min-h-screen pt-20 back text-white p-6">
       <div className="max-w-5xl mx-auto">
         <div className="grid md:grid-cols-2 gap-6 items-center">
           <img

@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router";
-
 import { toast } from "react-toastify";
 import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 
 const Signup = () => {
@@ -23,6 +23,18 @@ const Signup = () => {
     return null;
   };
 
+  const saveUserToDb = async ({ name, email, photoURL, role }) => {
+    await axios.post("http://localhost:3000/users", {
+      name,
+      email,
+      photoURL,
+      role, 
+      createdAt: new Date(),
+      
+    });
+     console.log("Server response:", saveUserToDb);
+  };
+
   const handleRegister = async (event) => {
     event.preventDefault();
     const displayName = event.target.displayName.value;
@@ -40,23 +52,20 @@ const Signup = () => {
       setRegistering(true);
       await createUser(email, password);
       await updateUserProfile(displayName, photoURL);
-      await fetch("http://localhost:3000/users", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          name: displayName,
-          email,
-          photoURL,
-          createdAt: new Date(),
-        }),
+      await saveUserToDb({
+        name: displayName,
+        email,
+        photoURL,
+        role: "general user", 
       });
       toast.success("Account created successfully!");
+      navigate("/");
     } catch (error) {
-      console.log(error);
-      toast.error(error.message, { id: "create-user" });
+      toast.error(error.response?.data?.message || error.message, {
+        id: "create-user",
+      });
     } finally {
       setRegistering(false);
-      navigate("/");
     }
   };
 
@@ -64,24 +73,21 @@ const Signup = () => {
     try {
       setRegistering(true);
       const result = await signInWithGoogle();
-      const user = result.user;
-      await fetch("http://localhost:3000/users", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          name: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL,
-          createdAt: new Date(),
-        }),
+      const { displayName, email, photoURL } = result.user;
+      await saveUserToDb({
+        name: displayName,
+        email,
+        photoURL,
+        role: "general user", 
       });
       toast.success("Account created successfully!", { id: "create-user" });
+      navigate("/");
     } catch (error) {
-      console.log(error);
-      toast.error(error.message, { id: "create-user" });
+      toast.error(error.response?.data?.message || error.message, {
+        id: "create-user",
+      });
     } finally {
       setRegistering(false);
-      navigate("/");
     }
   };
 
@@ -109,14 +115,12 @@ const Signup = () => {
             required
             className="w-full !bg-[#252533] !border !border-[#2a2a38] focus:!border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm outline-none transition"
           />
-
           <input
             type="text"
             name="photoURL"
             placeholder="Photo URL (optional)"
             className="w-full !bg-[#252533] !border !border-[#2a2a38] focus:!border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm outline-none transition"
           />
-
           <input
             type="email"
             name="email"
@@ -124,7 +128,6 @@ const Signup = () => {
             required
             className="w-full !bg-[#252533] !border !border-[#2a2a38] focus:!border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm outline-none transition"
           />
-
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -141,7 +144,6 @@ const Signup = () => {
               {showPassword ? <FaEyeSlash size={15} /> : <FaEye size={15} />}
             </button>
           </div>
-
           <button
             type="submit"
             className="w-full !bg-[#C15B9C] hover:!bg-[#a84d87] text-white font-semibold py-2.5 rounded-lg text-sm transition"
