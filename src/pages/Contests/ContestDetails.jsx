@@ -148,7 +148,7 @@ function ContestDetails() {
 
             <div className="flex justify-between mb-4">
               <p>Participants: {participants}</p>
-
+                
               {ended ? (
                 <p className="text-red-400">Contest Ended</p>
               ) : (
@@ -160,6 +160,7 @@ function ContestDetails() {
                 </div>
               )}
             </div>
+            <div></div>
 
             <p className="mb-3">{contest.description}</p>
             <p className="mb-3">{contest.taskInstruction}</p>

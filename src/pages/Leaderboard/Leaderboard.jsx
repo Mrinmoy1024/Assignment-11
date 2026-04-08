@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const Leaderboard = () => {
   const [leaders, setLeaders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/leaderboard")
-      .then((res) => res.json())
-      .then((data) => {
-        setLeaders(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch leaderboard:", err);
-        setLoading(false);
-      });
+    axios
+      .get("http://localhost:3000/leaderboard")
+      .then(({ data }) => setLeaders(data))
+      .catch((err) => console.error("Failed to fetch leaderboard:", err))
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) {

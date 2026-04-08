@@ -1,14 +1,14 @@
-import { div } from "motion/react-client";
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const RecentWinnerCard = () => {
   const [winners, setWinners] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/recent-winners")
-      .then((res) => res.json())
-      .then((data) => setWinners(data))
+    axios
+      .get("http://localhost:3000/recent-winners")
+      .then(({ data }) => setWinners(data))
       .catch((err) => console.error("Failed to fetch recent winners:", err))
       .finally(() => setLoading(false));
   }, []);
@@ -60,7 +60,6 @@ const RecentWinnerCard = () => {
                   </div>
                 )}
               </div>
-
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h3 className="font-bold text-white group-hover:text-[#C15B9C] transition-colors">

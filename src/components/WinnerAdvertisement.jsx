@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { NavLink } from "react-router";
+import axios from "axios";
 
 const WinnerAdvertisement = () => {
   const [contests, setContests] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/contest")
-      .then((res) => res.json())
-      .then((data) => {
-        setContests(Array.isArray(data) ? data : []);
-      });
+    axios
+      .get("http://localhost:3000/contest")
+      .then(({ data }) => setContests(Array.isArray(data) ? data : []))
+      .catch((err) => console.error("Failed to fetch contests:", err));
   }, []);
 
   const topContests = [...contests]
@@ -23,7 +23,7 @@ const WinnerAdvertisement = () => {
   );
 
   return (
-    <div className=" relative w-full py-20 mt-20">
+    <div className="relative w-full py-20 mt-20">
       <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(0,0,0,0.9)_0%,rgba(0,0,0,0.6)_60%,transparent_100%)]" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 text-white">
@@ -84,14 +84,11 @@ const WinnerAdvertisement = () => {
                 className="w-full h-48 object-cover"
                 alt={contest.name}
               />
-
               <div className="p-5">
                 <h3 className="text-lg font-bold mb-2">{contest.name}</h3>
-
                 <p className="text-sm text-white/60 mb-3">
                   {contest.contestType}
                 </p>
-
                 <p className="text-amber-400 font-semibold text-lg">
                   💰 ${contest.prizeMoney.toLocaleString()}
                 </p>

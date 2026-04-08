@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router";
-import { useContext } from "react";
+import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
-
 
 const typeColors = {
   Design: "#f59e0b",
@@ -23,21 +22,18 @@ const PopularContests = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3000/contest")
-      .then((res) => res.json())
-      .then((data) => {
+    axios
+      .get("http://localhost:3000/contest")
+      .then(({ data }) => {
         const sorted = Array.isArray(data)
           ? [...data]
               .sort((a, b) => b.participantCount - a.participantCount)
               .slice(0, 6)
           : [];
         setContests(sorted);
-        setLoading(false);
       })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleDetails = (id) => {
@@ -59,7 +55,6 @@ const PopularContests = () => {
   return (
     <section className="back py-16 px-4">
       <div className="max-w-7xl mx-auto">
-    
         <div className="flex items-end justify-between mb-10">
           <div>
             <p className="text-[#C15B9C] text-sm font-medium uppercase tracking-widest mb-2">
@@ -87,33 +82,25 @@ const PopularContests = () => {
                 key={contest.id}
                 className="bg-[#1c1c26] border border-[#2a2a38] rounded-2xl overflow-hidden flex flex-col group hover:border-[#C15B9C] transition duration-300"
               >
-    
                 <div className="relative h-48 overflow-hidden">
                   <img
                     src={contest.image}
                     alt={contest.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                   />
-
-              
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c26] via-transparent to-transparent" />
-
-                 
                   <div
                     className="absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center text-black text-xs font-bold"
                     style={{ background: accent }}
                   >
                     #{index + 1}
                   </div>
-
-           
                   <span
                     className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-1 rounded-full text-black"
                     style={{ background: accent }}
                   >
                     {contest.contestType}
                   </span>
-
                   <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
                     <div className="flex -space-x-1">
                       {[...Array(3)].map((_, i) => (
@@ -136,12 +123,9 @@ const PopularContests = () => {
                   <h3 className="text-white font-semibold text-base leading-snug line-clamp-2 group-hover:text-[#C15B9C] transition">
                     {contest.name}
                   </h3>
-
                   <p className="text-gray-500 text-xs leading-relaxed flex-1">
                     {contest.description?.slice(0, 100)}…
                   </p>
-
-                
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-gray-500">
                       🏆 Prize:{" "}
@@ -156,7 +140,6 @@ const PopularContests = () => {
                       </span>
                     </span>
                   </div>
-
                   <button
                     onClick={() => handleDetails(contest.id)}
                     className="w-full bg-[#C15B9C] hover:bg-[#a84d87] text-white text-xs font-semibold py-2.5 rounded-lg transition"
@@ -168,7 +151,6 @@ const PopularContests = () => {
             );
           })}
         </div>
-
 
         <div className="flex justify-center mt-8 sm:hidden">
           <button
