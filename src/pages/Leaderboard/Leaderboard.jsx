@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchLeaderboard = async () => {
+  const { data } = await axios.get("http://localhost:3000/leaderboard");
+  return data;
+};
 
 const Leaderboard = () => {
-  const [leaders, setLeaders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: leaders = [], isLoading } = useQuery({
+    queryKey: ["leaderboard"],
+    queryFn: fetchLeaderboard,
+  });
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/leaderboard")
-      .then(({ data }) => setLeaders(data))
-      .catch((err) => console.error("Failed to fetch leaderboard:", err))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#625FA3] via-[#C15B9C] to-[#6EB18E]">
         <div className="text-white text-xl font-semibold animate-pulse">

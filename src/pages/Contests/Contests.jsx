@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const typeColors = {
   Design: "#f59e0b",
@@ -25,26 +27,21 @@ const sortOptions = [
   { label: "Most Participants", value: "participants_desc" },
 ];
 
+const fetchContests = async () => {
+  const { data } = await axios.get("http://localhost:3000/contest");
+  return Array.isArray(data) ? data : [];
+};
+
 const Contests = () => {
-  const [contests, setContests] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
   const [filterType, setFilterType] = useState("All");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch("http://localhost:3000/contest")
-      .then((res) => res.json())
-      .then((data) => {
-        setContests(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
-  }, []);
+  const { data: contests = [], isLoading } = useQuery({
+    queryKey: ["contests"],
+    queryFn: fetchContests,
+  });
 
   const contestTypes = ["All", ...new Set(contests.map((c) => c.contestType))];
 
@@ -86,7 +83,7 @@ const Contests = () => {
     setCurrentPage(1);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <span className="loading loading-spinner loading-lg"></span>
@@ -152,14 +149,12 @@ const Contests = () => {
                     alt={contest.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   />
-
                   <span
                     className="absolute top-3 left-3 text-[10px] font-semibold px-2 py-1 rounded-full text-black"
                     style={{ background: accent }}
                   >
                     {contest.contestType}
                   </span>
-
                   <span className="absolute top-3 right-3 text-[10px] bg-black/60 text-white px-2 py-1 rounded-full">
                     {daysLeft > 0 ? `${daysLeft}d left` : "Closing soon"}
                   </span>

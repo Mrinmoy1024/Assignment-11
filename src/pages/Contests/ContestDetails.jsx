@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 function useCountdown(deadline) {
   const [timeLeft, setTimeLeft] = useState(null);
@@ -78,33 +81,33 @@ function SubmitModal({ onClose, onSubmit }) {
   );
 }
 
+const fetchContestById = async (id) => {
+  const { data } = await axios.get("http://localhost:3000/contest");
+  return data.find((c) => String(c._id) === id || String(c.id) === id) ?? null;
+};
+
 function ContestDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [contest, setContest] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [isRegistered, setIsRegistered] = useState(false);
-  const [participants, setParticipants] = useState(0);
+  const [participants, setParticipants] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  const { timeLeft, ended } = useCountdown(contest?.deadline);
+  const { data: contest, isLoading } = useQuery({
+    queryKey: ["contests", id],
+    queryFn: () => fetchContestById(id),
+    staleTime: 1000 * 60 * 2,
+  });
 
+  
   useEffect(() => {
-    fetch(`http://localhost:3000/contest`)
-      .then((r) => r.json())
-      .then((data) => {
-        const found = data.find(
-          (c) => String(c._id) === id || String(c.id) === id,
-        );
-        if (found) {
-          setContest(found);
-          setParticipants(found.participants ?? 0);
-        }
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [id]);
+    if (contest && participants === null) {
+      setParticipants(contest.participants ?? 0);
+    }
+  }, [contest]);
+
+  const { timeLeft, ended } = useCountdown(contest?.deadline);
 
   const handleRegister = () => {
     if (ended) return;
@@ -117,7 +120,7 @@ function ContestDetails() {
     console.log("Submitted:", data);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0c0b18]">
         <div className="w-12 h-12 border-4 border-[#625FA3] border-t-[#C15B9C] rounded-full animate-spin" />
@@ -148,7 +151,7 @@ function ContestDetails() {
 
             <div className="flex justify-between mb-4">
               <p>Participants: {participants}</p>
-                
+
               {ended ? (
                 <p className="text-red-400">Contest Ended</p>
               ) : (
@@ -160,7 +163,6 @@ function ContestDetails() {
                 </div>
               )}
             </div>
-            <div></div>
 
             <p className="mb-3">{contest.description}</p>
             <p className="mb-3">{contest.taskInstruction}</p>

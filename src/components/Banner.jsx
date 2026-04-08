@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { motion } from "framer-motion";
@@ -6,20 +6,18 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Link } from "react-router";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const Banner = () => {
-  const [contests, setContests] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: contests = [], isLoading } = useQuery({
+    queryKey: ["contests"],
+    queryFn: () =>
+      axios
+        .get("http://localhost:3000/contest")
+        .then(({ data }) => (Array.isArray(data) ? data : [])),
+  });
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/contest")
-      .then(({ data }) => setContests(Array.isArray(data) ? data : []))
-      .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="w-full h-[80vh] flex justify-center items-center">
         <span className="loading loading-spinner loading-lg"></span>

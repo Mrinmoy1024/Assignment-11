@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../context/AuthContext";
 
 const typeColors = {
@@ -15,26 +16,23 @@ const typeColors = {
   Creative: "#a855f7",
 };
 
+const fetchContests = async () => {
+  const { data } = await axios.get("http://localhost:3000/contest");
+  return Array.isArray(data)
+    ? [...data]
+        .sort((a, b) => b.participantCount - a.participantCount)
+        .slice(0, 6)
+    : [];
+};
+
 const PopularContests = () => {
-  const [contests, setContests] = useState([]);
-  const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/contest")
-      .then(({ data }) => {
-        const sorted = Array.isArray(data)
-          ? [...data]
-              .sort((a, b) => b.participantCount - a.participantCount)
-              .slice(0, 6)
-          : [];
-        setContests(sorted);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: contests = [], isLoading } = useQuery({
+    queryKey: ["contests", "popular"],
+    queryFn: fetchContests,
+  });
 
   const handleDetails = (id) => {
     if (!user) {
@@ -44,7 +42,7 @@ const PopularContests = () => {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center py-20">
         <span className="loading loading-spinner loading-lg"></span>

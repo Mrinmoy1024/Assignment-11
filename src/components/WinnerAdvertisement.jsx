@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { NavLink } from "react-router";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchContests = async () => {
+  const { data } = await axios.get("http://localhost:3000/contest");
+  return Array.isArray(data) ? data : [];
+};
 
 const WinnerAdvertisement = () => {
-  const [contests, setContests] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/contest")
-      .then(({ data }) => setContests(Array.isArray(data) ? data : []))
-      .catch((err) => console.error("Failed to fetch contests:", err));
-  }, []);
+  const { data: contests = [] } = useQuery({
+    queryKey: ["contests"],
+    queryFn: fetchContests,
+  });
 
   const topContests = [...contests]
     .sort((a, b) => b.prizeMoney - a.prizeMoney)
@@ -21,7 +23,6 @@ const WinnerAdvertisement = () => {
     (sum, contest) => sum + (contest.prizeMoney || 0),
     0,
   );
-
   return (
     <div className="relative w-full py-20 mt-20">
       <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(0,0,0,0.9)_0%,rgba(0,0,0,0.6)_60%,transparent_100%)]" />

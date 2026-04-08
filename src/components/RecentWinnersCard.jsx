@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchRecentWinners = async () => {
+  const { data } = await axios.get("http://localhost:3000/recent-winners");
+  return data;
+};
 
 const RecentWinnerCard = () => {
-  const [winners, setWinners] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: winners = [], isLoading } = useQuery({
+    queryKey: ["recent-winners"],
+    queryFn: fetchRecentWinners,
+  });
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/recent-winners")
-      .then(({ data }) => setWinners(data))
-      .catch((err) => console.error("Failed to fetch recent winners:", err))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
