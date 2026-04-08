@@ -10,6 +10,8 @@ import NotFound from "./pages/404/NotFound";
 import ContestDetails from "./pages/Contests/ContestDetails";
 
 import Dashboard from "./pages/Dashboard/Dashboard";
+import ViewUsers from "./pages/Dashboard/ViewUsers";
+import AdminRoutes from "./Private/AdminRoutes";
 
 const router = createBrowserRouter([
   {
@@ -58,7 +60,17 @@ const router = createBrowserRouter([
       <PrivateRoute>
         <Dashboard></Dashboard>
       </PrivateRoute>
-    )
+    ),
+    children: [
+      {
+        path: "view-users",
+        element: (
+          <AdminRoutes>
+            <ViewUsers></ViewUsers>
+          </AdminRoutes>
+        ),
+      },
+    ],
   },
 ]);
 

@@ -1,13 +1,11 @@
 import React from "react";
 import useAuth from "../Hooks/useAuth";
-
 import useRole from "../Hooks/useRole";
-
 import { Link } from "react-router";
 
 const AdminRoutes = ({ children }) => {
   const { loading } = useAuth();
-  const { role, roleLoading } = useRole();
+  const [role, roleLoading] = useRole(); // ✅ array destructure, not object
 
   if (loading || roleLoading) {
     return <p>loading</p>;

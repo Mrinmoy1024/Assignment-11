@@ -5,8 +5,6 @@ import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
-import { auth } from "../../firebase/firebase.config";
-import { signOut } from "firebase/auth";
 
 const Signup = () => {
   const { createUser, updateUserProfile, signInWithGoogle } =
@@ -26,32 +24,23 @@ const Signup = () => {
     return null;
   };
 
-  const checkEmailExists = async (email) => {
-    try {
-      await axios.get(`http://localhost:3000/users/check?email=${email}`);
-      return false;
-    } catch (error) {
-      if (error.response?.status === 409) return true;
-      throw error;
-    }
-  };
-
   const saveUserToDb = async ({ name, email, photoURL, role }) => {
     try {
       await axios.post("http://localhost:3000/users", {
         name,
         email,
-        photoURL,
+        photoURL: photoURL || "",
         role,
         createdAt: new Date(),
       });
     } catch (error) {
-      if (error.response?.status === 409) {
-        throw new Error("duplicate");
+      // 409 means user already exists — that's fine, just get token
+      if (error.response?.status !== 409) {
+        throw error;
       }
-      throw error;
     }
 
+    // Always get token whether user is new or existing
     const { data } = await axios.post("http://localhost:3000/jwt", { email });
     localStorage.setItem("token", data.token);
   };
@@ -72,16 +61,6 @@ const Signup = () => {
 
     try {
       setRegistering(true);
-
-      const emailTaken = await checkEmailExists(email);
-      if (emailTaken) {
-        toast.error(
-          "This email is already registered. Please sign in instead.",
-        );
-        navigate("/login");
-        return;
-      }
-
       await createUser(email, password);
       await updateUserProfile(displayName, photoURL);
       await saveUserToDb({
@@ -90,13 +69,10 @@ const Signup = () => {
         photoURL,
         role: "general user",
       });
-
       toast.success("Welcome! 🎉");
       navigate("/");
     } catch (error) {
-      if (error.message !== "duplicate") {
-        toast.error(error.response?.data?.message || error.message);
-      }
+      toast.error(error.response?.data?.message || error.message);
     } finally {
       setRegistering(false);
     }
@@ -105,18 +81,10 @@ const Signup = () => {
   const handleGoogleSignIn = async () => {
     try {
       setRegistering(true);
-
       const result = await signInWithGoogle();
       const { displayName, email, photoURL } = result.user;
 
-      const emailTaken = await checkEmailExists(email);
-      if (emailTaken) {
-        await signOut(auth);
-        toast.error("This email is already registered. Please login instead.");
-        navigate("/login");
-        return;
-      }
-
+      // Save to DB if new, or skip if existing — always get token
       await saveUserToDb({
         name: displayName,
         email,
@@ -127,9 +95,7 @@ const Signup = () => {
       toast.success("Welcome! 🎉");
       navigate("/");
     } catch (error) {
-      if (error.message !== "duplicate") {
-        toast.error(error.response?.data?.message || error.message);
-      }
+      toast.error(error.response?.data?.message || error.message);
     } finally {
       setRegistering(false);
     }
@@ -159,14 +125,12 @@ const Signup = () => {
             required
             className="w-full bg-[#252533] border border-[#2a2a38] focus:border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm outline-none transition"
           />
-
           <input
             type="text"
             name="photoURL"
             placeholder="Photo URL (optional)"
             className="w-full bg-[#252533] border border-[#2a2a38] focus:border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm outline-none transition"
           />
-
           <input
             type="email"
             name="email"
@@ -174,7 +138,6 @@ const Signup = () => {
             required
             className="w-full bg-[#252533] border border-[#2a2a38] focus:border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm outline-none transition"
           />
-
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -183,7 +146,6 @@ const Signup = () => {
               required
               className="w-full bg-[#252533] border border-[#2a2a38] focus:border-[#C15B9C] text-white placeholder-gray-500 rounded-lg px-4 py-2.5 pr-10 text-sm outline-none transition"
             />
-
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
@@ -192,7 +154,6 @@ const Signup = () => {
               {showPassword ? <FaEyeSlash size={15} /> : <FaEye size={15} />}
             </button>
           </div>
-
           <button
             type="submit"
             className="w-full bg-[#C15B9C] hover:bg-[#a84d87] text-white font-semibold py-2.5 rounded-lg text-sm transition"

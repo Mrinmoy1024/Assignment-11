@@ -16,7 +16,7 @@ import {
   UserCog,
   LogOut,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, Outlet, useMatch } from "react-router"; // ✅
 import Footer from "../../components/Footer";
 import { toast } from "react-toastify";
 
@@ -51,7 +51,7 @@ const AdminDashboard = ({ stats }) => (
         label="Total Users"
         value={stats?.totalUsers}
         color="#625FA3"
-        to="/dashboard/manage-users"
+        to="/dashboard/view-users"
       />
       <StatCard
         icon={Trophy}
@@ -169,6 +169,7 @@ const UserDashboard = ({ stats }) => (
 const Dashboard = () => {
   const { user, signOutUser } = useAuth();
   const navigate = useNavigate();
+  const isChildRoute = useMatch("/dashboard/:child"); // ✅
 
   const [role, setRole] = useState(null);
   const [stats, setStats] = useState(null);
@@ -198,7 +199,7 @@ const Dashboard = () => {
       if (!user?.email) return;
       try {
         const { data } = await axios.get(
-          `http://localhost:3000/users/role/${user.email}`,
+          `http://localhost:3000/users/role/${user.email}`
         );
         setRole(data.role);
 
@@ -213,12 +214,12 @@ const Dashboard = () => {
         } else if (data.role === "creator") {
           res = await axios.get(
             `http://localhost:3000/creator/stats?email=${user.email}`,
-            { headers },
+            { headers }
           );
         } else {
           res = await axios.get(
             `http://localhost:3000/user/stats?email=${user.email}`,
-            { headers },
+            { headers }
           );
         }
         setStats(res.data);
@@ -241,7 +242,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col gap-4 md:gap-6 overflow-visible px-3 md:px-6 py-4 md:py-6">
-      
+      {/* Header */}
       <div className="bg-gradient-to-r from-purple-600 to-pink-500 text-white p-4 md:p-6 rounded-2xl relative overflow-visible">
         <div className="flex items-center gap-3 md:gap-4 relative z-10">
           <div className="relative" ref={dropdownRef}>
@@ -287,11 +288,17 @@ const Dashboard = () => {
         </div>
       </div>
 
-    
+      {/* Stats or Child Route */}
       <div className="flex flex-1 items-center justify-center w-full py-4 md:py-10">
-        {role === "admin" && <AdminDashboard stats={stats} />}
-        {role === "creator" && <CreatorDashboard stats={stats} />}
-        {role === "general user" && <UserDashboard stats={stats} />}
+        {isChildRoute ? ( // ✅ show child route OR dashboard stats, never both
+          <Outlet />
+        ) : (
+          <>
+            {role === "admin" && <AdminDashboard stats={stats} />}
+            {role === "creator" && <CreatorDashboard stats={stats} />}
+            {role === "general user" && <UserDashboard stats={stats} />}
+          </>
+        )}
       </div>
 
       <Footer />

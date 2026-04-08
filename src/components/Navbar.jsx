@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Navigate, NavLink } from "react-router";
+import { Navigate, NavLink, useNavigate } from "react-router";
 import logo from "../assets/logo1.png";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
@@ -7,13 +7,13 @@ import { toast } from "react-toastify";
 const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  const navigate = useNavigate();
   const handleLogout = () => {
     signOutUser()
       .then(() => {
         setDropdownOpen(false);
         toast.success("Logged out successfully");
-        Navigate("/");
+        navigate("/");
       })
       .catch((err) => {
         toast.error("Logout failed: " + err.message);
