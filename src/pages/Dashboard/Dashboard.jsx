@@ -17,10 +17,14 @@ import {
   UserCog,
   LogOut,
   ArrowLeft,
+  LucideTableOfContents,
+  Gamepad2,
+  Gamepad2Icon,
 } from "lucide-react";
 import { Link, useNavigate, Outlet, useMatch } from "react-router";
 import Footer from "../../components/Footer";
 import { toast } from "react-toastify";
+
 
 const StatCard = ({ icon: Icon, label, value, color, to }) => (
   <Link
@@ -150,13 +154,7 @@ const UserDashboard = ({ stats }) => (
         color="#C15B9C"
         to="/dashboard/my-wins"
       />
-      <StatCard
-        icon={Clock}
-        label="Ongoing"
-        value={stats?.ongoing ?? "—"}
-        color="#6EB18E"
-        to="/all-contests"
-      />
+
       <StatCard
         icon={ShieldCheck}
         label="My Profile"
@@ -170,13 +168,6 @@ const UserDashboard = ({ stats }) => (
         value="Apply"
         color="#3b82f6"
         to="/dashboard/become-creator"
-      />
-      <StatCard
-        icon={PlusCircle}
-        label="Add a Review"
-        value="Write"
-        color="#ec4899"
-        to="/dashboard/add-review"
       />
     </div>
   </div>
@@ -195,9 +186,6 @@ const Dashboard = () => {
     navigate("/");
   };
 
-  const handleGoBack = () => {
-    navigate(-1);
-  };
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -278,12 +266,11 @@ const Dashboard = () => {
                 >
                   <UserCog size={16} /> Profile
                 </Link>
-                <button
-                  onClick={handleGoBack}
-                  className="flex items-center gap-2 p-3 w-full hover:bg-gray-100 text-sm"
-                >
-                  <ArrowLeft size={16} /> Go Back
-                </button>
+                <Link to="/all-contests">
+                  <button className="flex items-center gap-2 p-3 w-full hover:bg-gray-100 text-sm cursor-pointer">
+                    <Gamepad2Icon /> All Contests
+                  </button>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-2 p-3 w-full text-red-500 hover:bg-red-50 text-sm"

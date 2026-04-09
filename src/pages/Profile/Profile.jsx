@@ -4,6 +4,7 @@ import axiosSecure from "../../Hooks/axiosSecure";
 import { toast } from "react-toastify";
 import useAuth from "../../Hooks/useAuth";
 import useRole from "../../Hooks/useRole";
+import { useNavigate } from "react-router";
 
 const Profile = () => {
   const { user, updateUserProfile } = useAuth();
@@ -39,12 +40,22 @@ const Profile = () => {
       : role === "creator"
         ? "bg-pink-100 text-pink-600"
         : "bg-gray-100 text-gray-600";
-
+  const navigate = useNavigate();
+  const handleGoBack = () => {
+    navigate(-1);
+  };
   return (
     <div className="w-full max-w-xl mx-auto py-10 px-4 pb-55 pt-55">
-      <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
-        My Profile
-      </h2>
+      <div className="flex justify-between">
+        <div>
+          <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
+            My Profile
+          </h2>
+        </div>
+        <div>
+          <button className="btn " onSubmit={handleGoBack}>Go Back</button>
+        </div>
+      </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-[#e5e3f5] p-6">
         <div className="flex flex-col items-center gap-3 mb-6">

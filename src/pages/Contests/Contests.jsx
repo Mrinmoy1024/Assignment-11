@@ -201,7 +201,7 @@ const Contests = () => {
                   </div>
 
                   <button
-                    onClick={() => navigate(`/contest-details/${contest.id}`)}
+                    onClick={() => navigate(`/contest-details/${contest._id}`)}
                     className="w-full bg-[#C15B9C] hover:bg-[#a84d87] text-white text-xs font-semibold py-2 rounded-lg transition"
                   >
                     View Details

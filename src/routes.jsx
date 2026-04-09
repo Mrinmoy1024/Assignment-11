@@ -18,6 +18,7 @@ import CreatorRoute from "./Private/CreatorRoute";
 import AddContest from "./pages/Dashboard/AddContest";
 import Submissions from "./pages/Dashboard/Submissions";
 import MyContests from "./pages/Dashboard/MyContests";
+import Payment from "./pages/Payment/Payment";
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,15 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path: "/payment/:id",
+        element: (
+          <PrivateRoute>
+            <Payment />
+          </PrivateRoute>
+        ),
+      },
+
       {
         path: "*",
         element: <NotFound></NotFound>,
@@ -110,11 +120,7 @@ const router = createBrowserRouter([
       },
       {
         path: "my-contests",
-        element: (
-          <CreatorRoute>
-            <MyContests></MyContests>
-          </CreatorRoute>
-        ),
+        element: <MyContests></MyContests>,
       },
     ],
   },

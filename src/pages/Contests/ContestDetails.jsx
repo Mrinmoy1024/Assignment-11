@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import axiosSecure from "../../Hooks/axiosSecure";
+import useAuth from "../../Hooks/useAuth";
 
 function useCountdown(deadline) {
   const [timeLeft, setTimeLeft] = useState(null);
@@ -12,13 +13,11 @@ function useCountdown(deadline) {
 
     const calc = () => {
       const diff = new Date(deadline) - new Date();
-
       if (diff <= 0) {
         setEnded(true);
         setTimeLeft(null);
         return;
       }
-
       setTimeLeft({
         d: Math.floor(diff / 86400000),
         h: Math.floor((diff % 86400000) / 3600000),
@@ -48,91 +47,41 @@ function CountdownUnit({ value, label }) {
   );
 }
 
-function SubmitModal({ onClose, onSubmit }) {
-  const [text, setText] = useState("");
-
-  const handleSubmit = () => {
-    if (!text.trim()) return;
-    onSubmit(text);
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 back flex items-center justify-center z-50">
-      <div className="back p-6 rounded-xl w-full max-w-md">
-        <h2 className="text-lg font-bold mb-3 text-white">Submit Task</h2>
-
-        <textarea
-          className="w-full p-3 rounded bg-black/30 text-white mb-3"
-          rows={4}
-          placeholder="Paste your links here..."
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-
-        <div className="flex justify-end gap-2">
-          <button onClick={onClose} className="px-3 py-1 bg-gray-500 rounded">
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-3 py-1 bg-green-600 rounded"
-          >
-            Submit
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 const fetchContestById = async (id) => {
-  const { data } = await axiosSecure.get("/contest");
-  return data.find((c) => String(c._id) === id || String(c.id) === id) ?? null;
+  const { data } = await axiosSecure.get(`/contest/${id}`);
+  return data;
 };
 
 function ContestDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const [isRegistered, setIsRegistered] = useState(false);
-  const [participants, setParticipants] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+
+  const { data: alreadyJoined = false } = useQuery({
+    queryKey: ["joined", id, user?.email],
+    enabled: !!user?.email && !!id,
+    queryFn: async () => {
+      const { data } = await axiosSecure.get(
+        `/submissions/check?contestId=${id}&userEmail=${user.email}`,
+      );
+      return data.joined;
+    },
+  });
 
   const { data: contest, isLoading } = useQuery({
     queryKey: ["contest", id],
     queryFn: () => fetchContestById(id),
   });
 
-  useEffect(() => {
-    if (contest && participants === null) {
-      setParticipants(contest.participants ?? 0);
-    }
-  }, [contest]);
-
   const { timeLeft, ended } = useCountdown(contest?.deadline);
 
   const handleRegister = () => {
-    if (ended) return;
-
-    setIsRegistered(true);
-    setParticipants((p) => p + 1);
-
-    navigate(`/payment/${id}`);
-  };
-
-  const handleTaskSubmit = async (taskData) => {
-    try {
-      await axiosSecure.post("/submit-task", {
-        contestId: id,
-        submission: taskData,
-      });
-
-      alert("Task submitted successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to submit task");
+    if (!user) {
+      navigate("/login");
+      return;
     }
+    navigate(`/payment/${id}`);
   };
 
   if (isLoading) {
@@ -151,6 +100,16 @@ function ContestDetails() {
     );
   }
 
+  const isDisabled = ended || alreadyJoined || contest.status !== "allowed";
+
+  const buttonLabel = alreadyJoined
+    ? "Already Joined"
+    : ended
+      ? "Contest Ended"
+      : contest.status !== "allowed"
+        ? "Not Available"
+        : "Register & Pay";
+
   return (
     <div className="min-h-screen pt-20 back text-white p-6">
       <div className="max-w-5xl mx-auto">
@@ -165,8 +124,7 @@ function ContestDetails() {
             <h1 className="text-3xl font-bold mb-3">{contest.name}</h1>
 
             <div className="flex justify-between mb-4">
-              <p>Participants: {participants}</p>
-
+              <p>Participants: {contest.participants ?? 0}</p>
               {ended ? (
                 <p className="text-red-400">Contest Ended</p>
               ) : (
@@ -182,44 +140,48 @@ function ContestDetails() {
             <p className="mb-3">{contest.description}</p>
             <p className="mb-3">{contest.taskInstruction}</p>
 
-            <div className="flex gap-3">
-              <button
-                onClick={handleRegister}
-                disabled={ended || isRegistered}
-                className="px-4 py-2 bg-blue-600 rounded disabled:bg-gray-500"
-              >
-                {isRegistered ? "Registered" : "Register / Pay"}
-              </button>
-
-              <button
-                onClick={() => setShowModal(true)}
-                disabled={!isRegistered || ended}
-                className="px-4 py-2 bg-green-600 rounded disabled:bg-gray-500"
-              >
-                Submit Task
-              </button>
+            <div className="flex gap-3 flex-wrap">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-300">Entry Fee:</span>
+                <span className="font-bold text-[#C15B9C]">
+                  ${contest.price}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-300">Prize:</span>
+                <span className="font-bold text-green-400">
+                  ${contest.prizeMoney}
+                </span>
+              </div>
             </div>
+
+            <button
+              onClick={handleRegister}
+              disabled={isDisabled}
+              className="mt-5 cursor-pointer px-6 py-2 bg-[#625FA3] hover:bg-[#4f4d8a] text-white rounded-lg disabled:bg-gray-500 disabled:cursor-not-allowed transition"
+            >
+              {buttonLabel}
+            </button>
           </div>
         </div>
 
+      
         {contest.winner && (
-          <div className="mt-6 flex items-center gap-3">
+          <div className="mt-6 flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
             <img
               src={contest.winner.photo}
               alt={contest.winner.name}
               className="w-12 h-12 rounded-full"
             />
-            <p>Winner: {contest.winner.name}</p>
+            <div>
+              <p className="text-xs text-yellow-400 uppercase tracking-widest">
+                🏆 Winner
+              </p>
+              <p className="font-semibold">{contest.winner.name}</p>
+            </div>
           </div>
         )}
       </div>
-
-      {showModal && (
-        <SubmitModal
-          onClose={() => setShowModal(false)}
-          onSubmit={handleTaskSubmit}
-        />
-      )}
     </div>
   );
 }
