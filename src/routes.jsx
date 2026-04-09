@@ -20,6 +20,7 @@ import Submissions from "./pages/Dashboard/Submissions";
 import MyContests from "./pages/Dashboard/MyContests";
 import Payment from "./pages/Payment/Payment";
 import BecomeCreator from "./pages/Dashboard/BecomeCreator";
+import RequestPending from "./pages/Dashboard/RequestPending";
 
 const router = createBrowserRouter([
   {
@@ -126,6 +127,10 @@ const router = createBrowserRouter([
       {
         path: "become-creator",
         element: <BecomeCreator></BecomeCreator>,
+      },
+      {
+        path: "request-pending",
+        element: <RequestPending></RequestPending>,
       },
     ],
   },
