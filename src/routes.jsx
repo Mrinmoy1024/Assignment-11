@@ -12,6 +12,7 @@ import ContestDetails from "./pages/Contests/ContestDetails";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import ViewUsers from "./pages/Dashboard/ViewUsers";
 import AdminRoutes from "./Private/AdminRoutes";
+import ManageContests from "./pages/Dashboard/ManageContests";
 
 const router = createBrowserRouter([
   {
@@ -67,6 +68,14 @@ const router = createBrowserRouter([
         element: (
           <AdminRoutes>
             <ViewUsers></ViewUsers>
+          </AdminRoutes>
+        ),
+      },
+      {
+        path: "contests",
+        element: (
+          <AdminRoutes>
+            <ManageContests></ManageContests>
           </AdminRoutes>
         ),
       },

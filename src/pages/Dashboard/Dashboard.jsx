@@ -16,7 +16,7 @@ import {
   UserCog,
   LogOut,
 } from "lucide-react";
-import { Link, useNavigate, Outlet, useMatch } from "react-router"; // ✅
+import { Link, useNavigate, Outlet, useMatch } from "react-router"; 
 import Footer from "../../components/Footer";
 import { toast } from "react-toastify";
 
@@ -58,7 +58,7 @@ const AdminDashboard = ({ stats }) => (
         label="Total Contests"
         value={stats?.totalContests}
         color="#C15B9C"
-        to="/dashboard/manage-contests"
+        to="/dashboard/contests"
       />
       <StatCard
         icon={CheckCircle}
@@ -169,7 +169,7 @@ const UserDashboard = ({ stats }) => (
 const Dashboard = () => {
   const { user, signOutUser } = useAuth();
   const navigate = useNavigate();
-  const isChildRoute = useMatch("/dashboard/:child"); // ✅
+  const isChildRoute = useMatch("/dashboard/:child"); 
 
   const [role, setRole] = useState(null);
   const [stats, setStats] = useState(null);
@@ -242,7 +242,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col gap-4 md:gap-6 overflow-visible px-3 md:px-6 py-4 md:py-6">
-      {/* Header */}
+
       <div className="bg-gradient-to-r from-purple-600 to-pink-500 text-white p-4 md:p-6 rounded-2xl relative overflow-visible">
         <div className="flex items-center gap-3 md:gap-4 relative z-10">
           <div className="relative" ref={dropdownRef}>
@@ -288,9 +288,8 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Stats or Child Route */}
       <div className="flex flex-1 items-center justify-center w-full py-4 md:py-10">
-        {isChildRoute ? ( // ✅ show child route OR dashboard stats, never both
+        {isChildRoute ? ( 
           <Outlet />
         ) : (
           <>
