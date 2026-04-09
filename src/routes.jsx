@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import ViewUsers from "./pages/Dashboard/ViewUsers";
 import AdminRoutes from "./Private/AdminRoutes";
 import ManageContests from "./pages/Dashboard/ManageContests";
+import Profile from "./pages/Profile/Profile";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <ContestDetails></ContestDetails>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/profile",
+        element: (
+          <PrivateRoute>
+            <Profile />
           </PrivateRoute>
         ),
       },

@@ -125,10 +125,10 @@ const ManageContests = () => {
                 <td className="font-medium text-gray-700 max-w-[150px] truncate">
                   {contest.name}
                 </td>
-                <td className="text-gray-500 text-sm">{contest.contestType}</td>
-                <td className="text-gray-500 text-sm">${contest.price}</td>
-                <td className="text-gray-500 text-sm">${contest.prizeMoney}</td>
-                <td className="text-gray-500 text-sm">{contest.deadline}</td>
+                <td className="text-black text-sm">{contest.contestType}</td>
+                <td className="text-black text-sm">${contest.price}</td>
+                <td className="text-black text-sm">${contest.prizeMoney}</td>
+                <td className="text-black text-sm">{contest.deadline}</td>
                 <td>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${statusColor(contest.status)}`}

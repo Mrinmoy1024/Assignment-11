@@ -15,8 +15,9 @@ import {
   Home,
   UserCog,
   LogOut,
+  ArrowLeft,
 } from "lucide-react";
-import { Link, useNavigate, Outlet, useMatch } from "react-router"; 
+import { Link, useNavigate, Outlet, useMatch } from "react-router";
 import Footer from "../../components/Footer";
 import { toast } from "react-toastify";
 
@@ -169,7 +170,7 @@ const UserDashboard = ({ stats }) => (
 const Dashboard = () => {
   const { user, signOutUser } = useAuth();
   const navigate = useNavigate();
-  const isChildRoute = useMatch("/dashboard/:child"); 
+  const isChildRoute = useMatch("/dashboard/:child");
 
   const [role, setRole] = useState(null);
   const [stats, setStats] = useState(null);
@@ -182,6 +183,10 @@ const Dashboard = () => {
     await signOutUser();
     toast.success("Logged out");
     navigate("/");
+  };
+
+  const handleGoBack = () => {
+    navigate(-1); // Navigate one page backwards
   };
 
   useEffect(() => {
@@ -199,7 +204,7 @@ const Dashboard = () => {
       if (!user?.email) return;
       try {
         const { data } = await axios.get(
-          `http://localhost:3000/users/role/${user.email}`
+          `http://localhost:3000/users/role/${user.email}`,
         );
         setRole(data.role);
 
@@ -214,12 +219,12 @@ const Dashboard = () => {
         } else if (data.role === "creator") {
           res = await axios.get(
             `http://localhost:3000/creator/stats?email=${user.email}`,
-            { headers }
+            { headers },
           );
         } else {
           res = await axios.get(
             `http://localhost:3000/user/stats?email=${user.email}`,
-            { headers }
+            { headers },
           );
         }
         setStats(res.data);
@@ -242,9 +247,9 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col gap-4 md:gap-6 overflow-visible px-3 md:px-6 py-4 md:py-6">
-
       <div className="bg-gradient-to-r from-purple-600 to-pink-500 text-white p-4 md:p-6 rounded-2xl relative overflow-visible">
         <div className="flex items-center gap-3 md:gap-4 relative z-10">
+      
           <div className="relative" ref={dropdownRef}>
             <img
               onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -271,6 +276,12 @@ const Dashboard = () => {
                   <UserCog size={16} /> Profile
                 </Link>
                 <button
+                  onClick={handleGoBack}
+                  className="flex items-center gap-2 p-3 w-full hover:bg-gray-100 text-sm"
+                >
+                  <ArrowLeft size={16} /> Go Back
+                </button>
+                <button
                   onClick={handleLogout}
                   className="flex items-center gap-2 p-3 w-full text-red-500 hover:bg-red-50 text-sm"
                 >
@@ -289,7 +300,7 @@ const Dashboard = () => {
       </div>
 
       <div className="flex flex-1 items-center justify-center w-full py-4 md:py-10">
-        {isChildRoute ? ( 
+        {isChildRoute ? (
           <Outlet />
         ) : (
           <>

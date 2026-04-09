@@ -99,6 +99,12 @@ const Navbar = () => {
                       Dashboard
                     </button>
                   </NavLink>
+                  <NavLink to="/profile">
+                    <button className="btn btn-sm w-full bg-[#2e2c4b] mb-5">
+                      {" "}
+                      Profile
+                    </button>
+                  </NavLink>
                   <button
                     onClick={handleLogout}
                     className="btn btn-sm w-full bg-red-500 text-white hover:bg-red-700 "
