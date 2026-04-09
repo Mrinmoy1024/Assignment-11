@@ -1,18 +1,32 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosSecure from "../../Hooks/axiosSecure";
+import useAuth from "../../Hooks/useAuth";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-const ManageContests = () => {
+const contestTypes = [
+  "General",
+  "Business",
+  "Medical",
+  "Article Writing",
+  "Gaming",
+  "Science",
+  "Sports",
+  "Technology",
+];
+
+const MyContests = () => {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [editContest, setEditContest] = useState(null);
 
   const { data: contests = [], isLoading } = useQuery({
-    queryKey: ["contests"],
+    queryKey: ["myContests", user?.email],
+    enabled: !!user?.email,
     queryFn: async () => {
       const { data } = await axiosSecure.get("/contest");
-      return data;
+      return data.filter((c) => c.createdBy === user.email);
     },
   });
 
@@ -21,8 +35,8 @@ const ManageContests = () => {
       await axiosSecure.delete(`/contest/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["contests"]);
-      toast.success("Contest deleted successfully");
+      queryClient.invalidateQueries(["myContests", user?.email]);
+      toast.success("Contest deleted");
     },
     onError: () => toast.error("Failed to delete contest"),
   });
@@ -32,14 +46,18 @@ const ManageContests = () => {
       await axiosSecure.patch(`/contest/${id}`, updates);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["contests"]);
+      queryClient.invalidateQueries(["myContests", user?.email]);
       toast.success("Contest updated successfully");
       setEditContest(null);
     },
     onError: () => toast.error("Failed to update contest"),
   });
 
-  const handleDelete = (id) => {
+  const handleDelete = (id, status) => {
+    if (status === "allowed") {
+      toast.error("Approved contests cannot be deleted");
+      return;
+    }
     Swal.fire({
       title: "Are you sure?",
       text: "This contest will be permanently deleted!",
@@ -48,11 +66,8 @@ const ManageContests = () => {
       confirmButtonColor: "#e53e3e",
       cancelButtonColor: "#625FA3",
       confirmButtonText: "Yes, delete!",
-      cancelButtonText: "Cancel",
     }).then((result) => {
-      if (result.isConfirmed) {
-        deleteMutation.mutate(id);
-      }
+      if (result.isConfirmed) deleteMutation.mutate(id);
     });
   };
 
@@ -61,11 +76,11 @@ const ManageContests = () => {
       id: editContest._id,
       updates: {
         name: editContest.name,
+        image: editContest.image,
         contestType: editContest.contestType,
-        price: editContest.price,
-        prizeMoney: editContest.prizeMoney,
+        price: Number(editContest.price),
+        prizeMoney: Number(editContest.prizeMoney),
         deadline: editContest.deadline,
-        status: editContest.status,
         description: editContest.description,
         taskInstruction: editContest.taskInstruction,
       },
@@ -88,86 +103,98 @@ const ManageContests = () => {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full pb-55">
       <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
-        Manage Contests ({contests.length})
+        My Contests ({contests.length})
       </h2>
 
-      <div className="overflow-x-auto rounded-2xl border border-[#e5e3f5] shadow-sm">
-        <table className="table w-full">
-          <thead className="bg-[#625FA3] text-white">
-            <tr>
-              <th>#</th>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Price</th>
-              <th>Prize</th>
-              <th>Deadline</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {contests.map((contest, index) => (
-              <tr
-                key={contest._id}
-                className="hover:bg-[#f5f4fc] text-black transition-colors"
-              >
-                <td>{index + 1}</td>
-                <td>
-                  <img
-                    src={contest.image || "https://placehold.co/60x40"}
-                    alt={contest.name}
-                    className="w-14 h-10 rounded-lg object-cover"
-                  />
-                </td>
-                <td className="font-medium text-gray-700 max-w-[150px] truncate">
-                  {contest.name}
-                </td>
-                <td className="text-black text-sm">{contest.contestType}</td>
-                <td className="text-black text-sm">${contest.price}</td>
-                <td className="text-black text-sm">${contest.prizeMoney}</td>
-                <td className="text-black text-sm">{contest.deadline}</td>
-                <td>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${statusColor(contest.status)}`}
-                  >
-                    {contest.status}
-                  </span>
-                </td>
-                <td className="space-x-2">
-                  <button
-                    onClick={() => setEditContest(contest)}
-                    className="btn btn-sm bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none"
-                  >
-                    Update
-                  </button>
-                  <button
-                    onClick={() => handleDelete(contest._id)}
-                    className="btn btn-sm bg-red-500 text-white hover:bg-red-600 border-none"
-                    disabled={deleteMutation.isPending}
-                  >
-                    Delete
-                  </button>
-                </td>
+      {contests.length === 0 ? (
+        <div className="text-center py-20 text-gray-400">
+          You haven't created any contests yet.
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-2xl border border-[#e5e3f5] shadow-sm">
+          <table className="table w-full">
+            <thead className="bg-[#625FA3] text-black">
+              <tr>
+                <th>#</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Price</th>
+                <th>Prize</th>
+                <th>Deadline</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {contests.map((contest, index) => (
+                <tr
+                  key={contest._id}
+                  className="hover:bg-[#830d69] transition-colors"
+                >
+                  <td>{index + 1}</td>
+                  <td>
+                    <img
+                      src={contest.image || "https://placehold.co/60x40"}
+                      alt={contest.name}
+                      className="w-14 h-10 rounded-lg object-cover"
+                    />
+                  </td>
+                  <td className="font-medium text-black max-w-[150px] truncate">
+                    {contest.name}
+                  </td>
+                  <td className="text-black text-sm">
+                    {contest.contestType}
+                  </td>
+                  <td className="text-black text-sm">${contest.price}</td>
+                  <td className="text-black text-sm">
+                    ${contest.prizeMoney}
+                  </td>
+                  <td className="text-black text-sm">{contest.deadline}</td>
+                  <td>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${statusColor(contest.status)}`}
+                    >
+                      {contest.status}
+                    </span>
+                  </td>
+                  <td className="space-x-2">
+                    <button
+                      onClick={() => setEditContest(contest)}
+                      disabled={contest.status === "allowed"}
+                      className="btn btn-sm bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none disabled:opacity-40"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(contest._id, contest.status)}
+                      disabled={
+                        deleteMutation.isPending || contest.status === "allowed"
+                      }
+                      className="btn btn-sm bg-red-500 text-white hover:bg-red-600 border-none disabled:opacity-40"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-  
       {editContest && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="back rounded-2xl p-6 w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-[#08080833] flex items-center justify-center z-50 p-4">
+          <div className="bg-[#0f0d0e33] rounded-2xl p-6 w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-bold text-gray-700 mb-4">
-              Update Contest
+              Edit Contest
             </h3>
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-black mb-1 block">Name</label>
+                <label className="text-xs text-gray-500 mb-1 block">Name</label>
                 <input
                   type="text"
                   value={editContest.name}
@@ -179,11 +206,32 @@ const ManageContests = () => {
               </div>
 
               <div>
-                <label className="text-xs text-black mb-1 block">
-                  Contest Type
+                <label className="text-xs text-gray-500 mb-1 block">
+                  Image URL
                 </label>
                 <input
                   type="text"
+                  value={editContest.image}
+                  onChange={(e) =>
+                    setEditContest({ ...editContest, image: e.target.value })
+                  }
+                  className="input input-bordered w-full"
+                />
+                {editContest.image && (
+                  <img
+                    src={editContest.image}
+                    alt="Preview"
+                    className="mt-2 w-full h-32 object-cover rounded-lg"
+                    onError={(e) => (e.target.style.display = "none")}
+                  />
+                )}
+              </div>
+
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">
+                  Contest Type
+                </label>
+                <select
                   value={editContest.contestType}
                   onChange={(e) =>
                     setEditContest({
@@ -191,13 +239,19 @@ const ManageContests = () => {
                       contestType: e.target.value,
                     })
                   }
-                  className="input input-bordered w-full"
-                />
+                  className="select select-bordered w-full"
+                >
+                  {contestTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <label className="text-xs text-black mb-1 block">
+                  <label className="text-xs text-gray-500 mb-1 block">
                     Price ($)
                   </label>
                   <input
@@ -207,10 +261,11 @@ const ManageContests = () => {
                       setEditContest({ ...editContest, price: e.target.value })
                     }
                     className="input input-bordered w-full"
+                    min={0}
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="text-xs text-black mb-1 block">
+                  <label className="text-xs text-gray-500 mb-1 block">
                     Prize Money ($)
                   </label>
                   <input
@@ -223,12 +278,13 @@ const ManageContests = () => {
                       })
                     }
                     className="input input-bordered w-full"
+                    min={0}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-black mb-1 block">
+                <label className="text-xs text-gray-500 mb-1 block">
                   Deadline
                 </label>
                 <input
@@ -242,24 +298,7 @@ const ManageContests = () => {
               </div>
 
               <div>
-                <label className="text-xs text-black mb-1 block">
-                  Status
-                </label>
-                <select
-                  value={editContest.status}
-                  onChange={(e) =>
-                    setEditContest({ ...editContest, status: e.target.value })
-                  }
-                  className="select select-bordered w-full"
-                >
-                  <option value="allowed">Allowed</option>
-                  <option value="pending">Pending</option>
-                  <option value="rejected">Rejected</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-xs text-black mb-1 block">
+                <label className="text-xs text-gray-500 mb-1 block">
                   Description
                 </label>
                 <textarea
@@ -276,7 +315,7 @@ const ManageContests = () => {
               </div>
 
               <div>
-                <label className="text-xs text-black mb-1 block">
+                <label className="text-xs text-gray-500 mb-1 block">
                   Task Instruction
                 </label>
                 <textarea
@@ -293,17 +332,17 @@ const ManageContests = () => {
               </div>
             </div>
 
-            <div className="flex gap-2  justify-end mt-5">
+            <div className="flex gap-2 justify-end mt-5">
               <button
                 onClick={() => setEditContest(null)}
-                className="btn btn-sm "
+                className="btn btn-sm"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdate}
-                className="btn btn-sm  bg-[#625FA3] text-black hover:bg-[#4f4d8a] border-none"
                 disabled={updateMutation.isPending}
+                className="btn btn-sm bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none"
               >
                 {updateMutation.isPending ? "Saving..." : "Save Changes"}
               </button>
@@ -315,4 +354,4 @@ const ManageContests = () => {
   );
 };
 
-export default ManageContests;
+export default MyContests;

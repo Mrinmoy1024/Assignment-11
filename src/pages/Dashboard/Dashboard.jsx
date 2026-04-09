@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import useAuth from "../../Hooks/useAuth";
+import axiosSecure from "../../Hooks/axiosSecure";
+import { useQuery } from "@tanstack/react-query";
 import {
   Users,
   Trophy,
@@ -63,14 +64,28 @@ const AdminDashboard = ({ stats }) => (
       />
       <StatCard
         icon={CheckCircle}
-        label="Approved"
+        label="Approved Contests"
         value={stats?.approvedContests}
         color="#6EB18E"
         to="/dashboard/manage-contests"
       />
       <StatCard
+        icon={Clock}
+        label="Pending Contests"
+        value={stats?.pendingContests}
+        color="#f59e0b"
+        to="/dashboard/manage-contests"
+      />
+      <StatCard
+        icon={Clock}
+        label="Pending User Approval"
+        value={stats?.pendingContests}
+        color="#f59e0b"
+        to="/dashboard/manage-contests"
+      />
+      <StatCard
         icon={XCircle}
-        label="Pending"
+        label="Rejected Users"
         value={stats?.pendingContests}
         color="#f59e0b"
         to="/dashboard/manage-contests"
@@ -171,12 +186,7 @@ const Dashboard = () => {
   const { user, signOutUser } = useAuth();
   const navigate = useNavigate();
   const isChildRoute = useMatch("/dashboard/:child");
-
-  const [role, setRole] = useState(null);
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
   const dropdownRef = useRef(null);
 
   const handleLogout = async () => {
@@ -186,7 +196,7 @@ const Dashboard = () => {
   };
 
   const handleGoBack = () => {
-    navigate(-1); // Navigate one page backwards
+    navigate(-1);
   };
 
   useEffect(() => {
@@ -199,43 +209,37 @@ const Dashboard = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user?.email) return;
-      try {
-        const { data } = await axios.get(
-          `http://localhost:3000/users/role/${user.email}`,
+  const { data: role, isLoading: roleLoading } = useQuery({
+    queryKey: ["role", user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const { data } = await axiosSecure.get(`/users/role/${user.email}`);
+      return data.role;
+    },
+  });
+
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ["stats", role, user?.email],
+    enabled: !!role && !!user?.email,
+    queryFn: async () => {
+      if (role === "admin") {
+        const { data } = await axiosSecure.get("/admin/stats");
+        return data;
+      } else if (role === "creator") {
+        const { data } = await axiosSecure.get(
+          `/creator/stats?email=${user.email}`,
         );
-        setRole(data.role);
-
-        const token = localStorage.getItem("token");
-        const headers = { Authorization: `Bearer ${token}` };
-        let res;
-
-        if (data.role === "admin") {
-          res = await axios.get("http://localhost:3000/admin/stats", {
-            headers,
-          });
-        } else if (data.role === "creator") {
-          res = await axios.get(
-            `http://localhost:3000/creator/stats?email=${user.email}`,
-            { headers },
-          );
-        } else {
-          res = await axios.get(
-            `http://localhost:3000/user/stats?email=${user.email}`,
-            { headers },
-          );
-        }
-        setStats(res.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
+        return data;
+      } else {
+        const { data } = await axiosSecure.get(
+          `/user/stats?email=${user.email}`,
+        );
+        return data;
       }
-    };
-    fetchData();
-  }, [user]);
+    },
+  });
+
+  const loading = roleLoading || statsLoading;
 
   if (loading) {
     return (
@@ -249,7 +253,6 @@ const Dashboard = () => {
     <div className="min-h-screen flex flex-col gap-4 md:gap-6 overflow-visible px-3 md:px-6 py-4 md:py-6">
       <div className="bg-gradient-to-r from-purple-600 to-pink-500 text-white p-4 md:p-6 rounded-2xl relative overflow-visible">
         <div className="flex items-center gap-3 md:gap-4 relative z-10">
-      
           <div className="relative" ref={dropdownRef}>
             <img
               onClick={() => setDropdownOpen(!dropdownOpen)}

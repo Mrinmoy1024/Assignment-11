@@ -14,6 +14,10 @@ import ViewUsers from "./pages/Dashboard/ViewUsers";
 import AdminRoutes from "./Private/AdminRoutes";
 import ManageContests from "./pages/Dashboard/ManageContests";
 import Profile from "./pages/Profile/Profile";
+import CreatorRoute from "./Private/CreatorRoute";
+import AddContest from "./pages/Dashboard/AddContest";
+import Submissions from "./pages/Dashboard/Submissions";
+import MyContests from "./pages/Dashboard/MyContests";
 
 const router = createBrowserRouter([
   {
@@ -86,6 +90,30 @@ const router = createBrowserRouter([
           <AdminRoutes>
             <ManageContests></ManageContests>
           </AdminRoutes>
+        ),
+      },
+      {
+        path: "add-contest",
+        element: (
+          <CreatorRoute>
+            <AddContest></AddContest>
+          </CreatorRoute>
+        ),
+      },
+      {
+        path: "submissions",
+        element: (
+          <CreatorRoute>
+            <Submissions></Submissions>
+          </CreatorRoute>
+        ),
+      },
+      {
+        path: "my-contests",
+        element: (
+          <CreatorRoute>
+            <MyContests></MyContests>
+          </CreatorRoute>
         ),
       },
     ],

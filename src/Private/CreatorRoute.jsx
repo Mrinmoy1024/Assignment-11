@@ -3,7 +3,7 @@ import useAuth from "../Hooks/useAuth";
 import useRole from "../Hooks/useRole";
 import { Link } from "react-router";
 
-const AdminRoutes = ({ children }) => {
+const CreatorRoute = ({ children }) => {
   const { loading } = useAuth();
   const [role, roleLoading] = useRole();
 
@@ -11,7 +11,7 @@ const AdminRoutes = ({ children }) => {
     return <p>loading</p>;
   }
 
-  if (role !== "admin") {
+  if (role !== "creator" && role !== "admin") {
     return (
       <div className="w-full h-screen flex flex-col gap-4 justify-center items-center p-4">
         <div>
@@ -37,4 +37,4 @@ const AdminRoutes = ({ children }) => {
   return children;
 };
 
-export default AdminRoutes;
+export default CreatorRoute;
