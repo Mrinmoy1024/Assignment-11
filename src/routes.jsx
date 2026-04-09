@@ -19,6 +19,7 @@ import AddContest from "./pages/Dashboard/AddContest";
 import Submissions from "./pages/Dashboard/Submissions";
 import MyContests from "./pages/Dashboard/MyContests";
 import Payment from "./pages/Payment/Payment";
+import BecomeCreator from "./pages/Dashboard/BecomeCreator";
 
 const router = createBrowserRouter([
   {
@@ -121,6 +122,10 @@ const router = createBrowserRouter([
       {
         path: "my-contests",
         element: <MyContests></MyContests>,
+      },
+      {
+        path: "become-creator",
+        element: <BecomeCreator></BecomeCreator>,
       },
     ],
   },

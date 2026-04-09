@@ -34,7 +34,6 @@ const CheckoutForm = ({ contest }) => {
     setError(null);
 
     try {
-      
       const { data } = await axiosSecure.post("/create-payment-intent", {
         price: contest.price,
       });
@@ -57,14 +56,13 @@ const CheckoutForm = ({ contest }) => {
       }
 
       if (paymentIntent.status === "succeeded") {
-        
         await axiosSecure.post("/submissions", {
           contestId: contest._id,
           contestName: contest.name,
           contestStatus: contest.status,
           contestImage: contest.image,
           contestType: contest.contestType,
-          prizeMoney: contest.prizeMoney, 
+          prizeMoney: contest.prizeMoney,
           createdBy: contest.createdBy,
           userEmail: user?.email,
           userName: user?.displayName,
@@ -72,7 +70,6 @@ const CheckoutForm = ({ contest }) => {
           transactionId: paymentIntent.id,
         });
 
-      
         navigate("/dashboard/my-contests");
       }
     } catch (err) {
@@ -85,10 +82,11 @@ const CheckoutForm = ({ contest }) => {
       setProcessing(false);
     }
   };
-
+  const handleGoBack = () => {
+    navigate(-1);
+  };
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      
       <div className="flex items-center gap-4 bg-[#f5f4fc] rounded-xl p-4">
         <img
           src={contest.image}
@@ -128,18 +126,22 @@ const CheckoutForm = ({ contest }) => {
           {error}
         </p>
       )}
-
-      <button
-        type="submit"
-        disabled={!stripe || processing}
-        className="btn w-full bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none"
-      >
-        {processing ? (
-          <span className="loading loading-spinner loading-sm" />
-        ) : (
-          `Pay $${contest.price}`
-        )}
-      </button>
+      <div className="flex flex-col gap-5">
+        <button
+          type="submit"
+          disabled={!stripe || processing}
+          className="btn w-full bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none"
+        >
+          {processing ? (
+            <span className="loading loading-spinner loading-sm" />
+          ) : (
+            `Pay $${contest.price}`
+          )}
+        </button>
+        <button className="btn" onClick={handleGoBack}>
+          Go Back
+        </button>
+      </div>
 
       <p className="text-center text-xs text-gray-400">
         Secured by Stripe. Your card info is never stored.
