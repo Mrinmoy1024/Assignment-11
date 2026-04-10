@@ -155,13 +155,16 @@ function ContestDetails() {
               </div>
             </div>
 
-            <button
+            <div className="flex gap-10">
+              <button
               onClick={handleRegister}
               disabled={isDisabled}
               className="mt-5 cursor-pointer px-6 py-2 bg-[#625FA3] hover:bg-[#4f4d8a] text-white rounded-lg disabled:bg-gray-500 disabled:cursor-not-allowed transition"
             >
               {buttonLabel}
             </button>
+            <button onClick={()=>navigate(-1)} className="btn mt-11">Back</button>
+            </div>
           </div>
         </div>
 

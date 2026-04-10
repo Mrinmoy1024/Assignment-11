@@ -111,7 +111,7 @@ const PendingContests = () => {
               {contests.map((contest, index) => (
                 <tr
                   key={contest._id}
-                  className="hover:bg-[#f5f4fc] transition-colors"
+                  className="hover:bg-[#8f0b79] transition-colors"
                 >
                   <td>{index + 1}</td>
                   <td>
@@ -121,18 +121,18 @@ const PendingContests = () => {
                       className="w-14 h-10 rounded-lg object-cover"
                     />
                   </td>
-                  <td className="font-medium text-gray-700 max-w-[150px] truncate">
+                  <td className="font-medium text-black max-w-[150px] truncate">
                     {contest.name}
                   </td>
-                  <td className="text-gray-500 text-sm">
+                  <td className="text-black text-sm">
                     {contest.contestType}
                   </td>
-                  <td className="text-gray-500 text-sm">${contest.price}</td>
-                  <td className="text-gray-500 text-sm">
+                  <td className="text-black text-sm">${contest.price}</td>
+                  <td className="text-black text-sm">
                     ${contest.prizeMoney}
                   </td>
-                  <td className="text-gray-500 text-sm">{contest.deadline}</td>
-                  <td className="text-gray-500 text-sm truncate max-w-[140px]">
+                  <td className="text-black text-sm">{contest.deadline}</td>
+                  <td className="text-black text-sm truncate max-w-[140px]">
                     {contest.createdBy}
                   </td>
                   <td className="space-x-2">

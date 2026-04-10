@@ -27,17 +27,68 @@ const initialForm = {
   deadline: "",
 };
 
+const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
+
 const AddContest = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
+  const [imageMode, setImageMode] = useState("url");
+  const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("");
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    if (e.target.name === "image") {
+      setPreviewUrl(e.target.value);
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await fetch(
+        `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
+        { method: "POST", body: formData },
+      );
+      const data = await res.json();
+
+      if (data.success) {
+        const url = data.data.url;
+        setForm((prev) => ({ ...prev, image: url }));
+        setPreviewUrl(url);
+      } else {
+        Swal.fire({
+          title: "Upload Failed",
+          text: "Could not upload image. Please try a URL instead.",
+          icon: "error",
+          confirmButtonColor: "#e53e3e",
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        title: "Upload Failed",
+        text: "Something went wrong during upload.",
+        icon: "error",
+        confirmButtonColor: "#e53e3e",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const mutation = useMutation({
     mutationFn: async (contestData) => {
       await axiosSecure.post("/contest", contestData);
     },
     onSuccess: () => {
-      // ✅ invalidate so dashboard cards update instantly
       queryClient.invalidateQueries(["stats"]);
       queryClient.invalidateQueries(["myContests", user?.email]);
       Swal.fire({
@@ -48,6 +99,7 @@ const AddContest = () => {
         confirmButtonText: "Great!",
       });
       setForm(initialForm);
+      setPreviewUrl("");
     },
     onError: () => {
       Swal.fire({
@@ -59,10 +111,6 @@ const AddContest = () => {
     },
   });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -70,6 +118,16 @@ const AddContest = () => {
       Swal.fire({
         title: "Missing Field",
         text: "Please select a contest type.",
+        icon: "warning",
+        confirmButtonColor: "#625FA3",
+      });
+      return;
+    }
+
+    if (!form.image) {
+      Swal.fire({
+        title: "Missing Image",
+        text: "Please provide an image URL or upload an image.",
         icon: "warning",
         confirmButtonColor: "#625FA3",
       });
@@ -85,11 +143,10 @@ const AddContest = () => {
       createdAt: new Date(),
     });
   };
-  const navigate = useNavigate();
+
   return (
     <div className="w-full max-w-2xl mx-auto py-10 px-4">
       <div className="flex justify-between">
-        {" "}
         <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
           Add New Contest
         </h2>
@@ -97,6 +154,7 @@ const AddContest = () => {
           Back
         </button>
       </div>
+
       <div className="bg-white rounded-2xl shadow-sm border border-[#e5e3f5] p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -116,22 +174,70 @@ const AddContest = () => {
 
           <div>
             <label className="text-xs text-gray-500 mb-1 block">
-              Image URL
+              Contest Image
             </label>
-            <input
-              type="text"
-              name="image"
-              value={form.image}
-              onChange={handleChange}
-              placeholder="https://example.com/image.jpg"
-              required
-              className="input input-bordered w-full"
-            />
-            {form.image && (
+
+            <div className="flex gap-2 mb-3">
+              <button
+                type="button"
+                onClick={() => setImageMode("url")}
+                className={`btn btn-sm flex-1 ${imageMode === "url" ? "bg-[#625FA3] text-white border-none" : " border border-gray-200"}`}
+              >
+                Enter URL
+              </button>
+              <button
+                type="button"
+                onClick={() => setImageMode("upload")}
+                className={`btn btn-sm flex-1 ${imageMode === "upload" ? "bg-[#625FA3] text-white border-none" : " border border-gray-200"}`}
+              >
+                Upload File
+              </button>
+            </div>
+
+            {imageMode === "url" ? (
+              <input
+                type="text"
+                name="image"
+                value={form.image}
+                onChange={handleChange}
+                placeholder="Enter image URL here..."
+                className="input input-bordered w-full"
+              />
+            ) : (
+              <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  id="imageUpload"
+                />
+                <label
+                  htmlFor="imageUpload"
+                  className="cursor-pointer flex flex-col items-center gap-2"
+                >
+                  {uploading ? (
+                    <span className="loading loading-spinner loading-md text-[#625FA3]" />
+                  ) : (
+                    <>
+                      <span className="text-3xl">📁</span>
+                      <span className="text-sm text-gray-500">
+                        Click to upload image
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        PNG, JPG, WEBP up to 10MB
+                      </span>
+                    </>
+                  )}
+                </label>
+              </div>
+            )}
+
+            {previewUrl && (
               <img
-                src={form.image}
+                src={previewUrl}
                 alt="Preview"
-                className="mt-2 w-full h-40 object-cover rounded-lg"
+                className="mt-3 w-full h-40 object-cover rounded-lg"
                 onError={(e) => (e.target.style.display = "none")}
               />
             )}
@@ -257,7 +363,7 @@ const AddContest = () => {
           <div className="pt-2">
             <button
               type="submit"
-              disabled={mutation.isPending}
+              disabled={mutation.isPending || uploading}
               className="btn w-full bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none"
             >
               {mutation.isPending ? "Submitting..." : "Submit Contest"}

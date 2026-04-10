@@ -128,12 +128,12 @@ const CreatorRequest = () => {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   </td>
-                  <td className="font-medium text-gray-700">{req.userName}</td>
-                  <td className="text-gray-500 text-sm">{req.userEmail}</td>
-                  <td className="text-gray-400 text-xs font-mono truncate max-w-[140px]">
+                  <td className="font-medium text-black">{req.userName}</td>
+                  <td className="text-black text-sm">{req.userEmail}</td>
+                  <td className="text-black text-xs font-mono truncate max-w-[140px]">
                     {req.transactionId}
                   </td>
-                  <td className="text-gray-500 text-sm">
+                  <td className="text-black text-sm">
                     {new Date(req.requestedAt).toLocaleDateString()}
                   </td>
                   <td>

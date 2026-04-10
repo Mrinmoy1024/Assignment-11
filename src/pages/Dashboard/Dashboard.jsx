@@ -25,7 +25,6 @@ import { Link, useNavigate, Outlet, useMatch } from "react-router";
 import Footer from "../../components/Footer";
 import { toast } from "react-toastify";
 
-
 const StatCard = ({ icon: Icon, label, value, color, to }) => (
   <Link
     to={to}
@@ -105,13 +104,6 @@ const CreatorDashboard = ({ stats }) => (
     </h2>
     <div className="grid grid-cols-2 gap-4 md:gap-8 w-full">
       <StatCard
-        icon={ListTodo}
-        label="My Contests"
-        value={stats?.myContests}
-        color="#625FA3"
-        to="/dashboard/my-contests"
-      />
-      <StatCard
         icon={Award}
         label="Submissions"
         value={stats?.totalSubmissions}
@@ -131,6 +123,13 @@ const CreatorDashboard = ({ stats }) => (
         value="View"
         color="#f59e0b"
         to="/dashboard/analytics"
+      />
+      <StatCard
+        icon={Trophy}
+        label="Declare Winner"
+        value="View"
+        color="#f59e0b"
+        to="/dashboard/declare-winner"
       />
     </div>
   </div>

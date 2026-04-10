@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosSecure from "../../Hooks/axiosSecure";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router";
 
 const ApprovedContests = () => {
   const queryClient = useQueryClient();
@@ -40,6 +41,7 @@ const ApprovedContests = () => {
       if (result.isConfirmed) deleteMutation.mutate(id);
     });
   };
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -51,9 +53,14 @@ const ApprovedContests = () => {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
-        Approved Contests ({contests.length})
-      </h2>
+      <div className="flex justify-between">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
+          Approved Contests ({contests.length})
+        </h2>
+        <button className="btn" onClick={() => navigate(-1)}>
+          Back
+        </button>
+      </div>
 
       {contests.length === 0 ? (
         <div className="text-center py-20 text-gray-400">
@@ -79,7 +86,7 @@ const ApprovedContests = () => {
               {contests.map((contest, index) => (
                 <tr
                   key={contest._id}
-                  className="hover:bg-[#f5f4fc] transition-colors"
+                  className="hover:bg-[#da0a83] transition-colors"
                 >
                   <td>{index + 1}</td>
                   <td>
@@ -89,18 +96,14 @@ const ApprovedContests = () => {
                       className="w-14 h-10 rounded-lg object-cover"
                     />
                   </td>
-                  <td className="font-medium text-gray-700 max-w-[150px] truncate">
+                  <td className="font-medium text-black max-w-[150px] truncate">
                     {contest.name}
                   </td>
-                  <td className="text-gray-500 text-sm">
-                    {contest.contestType}
-                  </td>
-                  <td className="text-gray-500 text-sm">${contest.price}</td>
-                  <td className="text-gray-500 text-sm">
-                    ${contest.prizeMoney}
-                  </td>
-                  <td className="text-gray-500 text-sm">{contest.deadline}</td>
-                  <td className="text-gray-500 text-sm truncate max-w-[140px]">
+                  <td className="text-black text-sm">{contest.contestType}</td>
+                  <td className="text-black text-sm">${contest.price}</td>
+                  <td className="text-black text-sm">${contest.prizeMoney}</td>
+                  <td className="text-black text-sm">{contest.deadline}</td>
+                  <td className="text-black text-sm truncate max-w-[140px]">
                     {contest.createdBy}
                   </td>
                   <td>

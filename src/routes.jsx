@@ -25,6 +25,7 @@ import CreatorRequest from "./pages/Dashboard/CreatorResquest";
 import RejectedUsers from "./pages/Dashboard/RejectedUsers";
 import PendingContests from "./pages/Dashboard/PendinContests";
 import ApprovedContests from "./pages/Dashboard/ApprovedContests";
+import DeclareWinner from "./pages/Dashboard/DeclareWInner";
 
 const router = createBrowserRouter([
   {
@@ -151,6 +152,10 @@ const router = createBrowserRouter([
       {
         path: "approved-contests",
         element: <ApprovedContests></ApprovedContests>,
+      },
+      {
+        path: "declare-winner",
+        element: <DeclareWinner></DeclareWinner>,
       },
     ],
   },
