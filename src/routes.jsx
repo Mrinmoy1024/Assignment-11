@@ -23,11 +23,12 @@ import BecomeCreator from "./pages/Dashboard/BecomeCreator";
 import RequestPending from "./pages/Dashboard/RequestPending";
 import CreatorRequest from "./pages/Dashboard/CreatorResquest";
 import RejectedUsers from "./pages/Dashboard/RejectedUsers";
-import PendingContests from "./pages/Dashboard/PendinContests";
+import PendingContests from "./pages/Dashboard/PendingContests";
 import ApprovedContests from "./pages/Dashboard/ApprovedContests";
 import DeclareWinner from "./pages/Dashboard/DeclareWInner";
 import CreatedContests from "./pages/Dashboard/CreatorContests";
 import Analytics from "./pages/Dashboard/Analytics";
+import TotalWins from "./pages/Dashboard/TotalWins";
 
 const router = createBrowserRouter([
   {
@@ -173,6 +174,14 @@ const router = createBrowserRouter([
           <CreatorRoute>
             <Analytics />
           </CreatorRoute>
+        ),
+      },
+      {
+        path: "my-wins",
+        element: (
+          <PrivateRoute>
+            <TotalWins></TotalWins>
+          </PrivateRoute>
         ),
       },
     ],

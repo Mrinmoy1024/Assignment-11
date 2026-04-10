@@ -95,7 +95,13 @@ const Contests = () => {
     <div className="min-h-screen back px-4 py-10">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-1">All Contests</h1>
+          <div className="flex justify-between">
+            <h1 className="text-3xl font-bold text-white mb-1">All Contests</h1>
+            <button className="btn" onClick={() => navigate(-1)}>
+              {" "}
+              Back
+            </button>
+          </div>
           <p className="text-gray-500 text-sm">
             {filtered.length} contests available
           </p>

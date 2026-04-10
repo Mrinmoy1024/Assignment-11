@@ -110,8 +110,8 @@ const CreatedContests = () => {
         <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
           My Created Contests ({contests.length})
         </h2>
-        <button className="btn" onClick={() => navigate(-1)}>
-          Back
+        <button className="btn" onClick={() => navigate("/dashboard")}>
+          Dashboard
         </button>
       </div>
 
@@ -152,13 +152,9 @@ const CreatedContests = () => {
                   <td className="font-medium text-black max-w-[150px] truncate">
                     {contest.name}
                   </td>
-                  <td className="text-black text-sm">
-                    {contest.contestType}
-                  </td>
+                  <td className="text-black text-sm">{contest.contestType}</td>
                   <td className="text-black text-sm">${contest.price}</td>
-                  <td className="text-black text-sm">
-                    ${contest.prizeMoney}
-                  </td>
+                  <td className="text-black text-sm">${contest.prizeMoney}</td>
                   <td className="text-black text-sm">{contest.deadline}</td>
                   <td>
                     <span

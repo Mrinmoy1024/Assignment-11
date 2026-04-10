@@ -106,7 +106,7 @@ const AddContest = () => {
         confirmButtonColor: "#625FA3",
         confirmButtonText: "Great!",
       }).then(() => {
-        navigate("/dashboard/my-contests");
+        navigate("/dashboard/created-contests");
       });
       setForm(initialForm);
       setPreviewUrl("");

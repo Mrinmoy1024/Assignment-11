@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import axiosSecure from "../../Hooks/axiosSecure";
 import useAuth from "../../Hooks/useAuth";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const statusColor = (status) => {
   if (status === "allowed") return "bg-green-100 text-green-600";
@@ -45,13 +45,19 @@ const MyContests = () => {
           </h2>
         </div>
         <div>
-          <button className="btn" onClick={handleGoBack}>Go Back</button>
+          <button className="btn" onClick={handleGoBack}>
+            Go Back
+          </button>
         </div>
       </div>
 
       {submissions.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
+        <div className="text-center grid gap-5 py-20 text-gray-400">
           You haven't joined any contests yet.
+          <Link to="/all-contests">
+            {" "}
+            <button className="btn">Join A Contest</button>
+          </Link>
         </div>
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-[#e5e3f5] shadow-sm">
@@ -77,13 +83,12 @@ const MyContests = () => {
                   <td>{index + 1}</td>
                   <td>
                     <img
-                      src={sub.contestImage || "https://placehold.co/60x40"}
-                      alt={sub.contestName}
+                      src={sub.image || "https://placehold.co/60x40"}
                       className="w-14 h-10 rounded-lg object-cover"
                     />
                   </td>
                   <td className="font-medium text-gray-700 max-w-[150px] truncate">
-                    {sub.contestName}
+                    {sub.name}
                   </td>
                   <td className="text-black text-sm">{sub.contestType}</td>
                   <td className="text-black text-sm">
@@ -116,6 +121,11 @@ const MyContests = () => {
           </table>
         </div>
       )}
+      <div className="text-center mt-12">
+        <Link to="/all-contests">
+          <button className="btn">Join More Contests</button>
+        </Link>
+      </div>
     </div>
   );
 };
