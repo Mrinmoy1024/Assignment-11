@@ -30,6 +30,7 @@ import CreatedContests from "./pages/Dashboard/CreatorContests";
 import Analytics from "./pages/Dashboard/Analytics";
 import TotalWins from "./pages/Dashboard/TotalWins";
 import Testimonials from "./pages/review/Testimonials";
+import HowItWorks from "./pages/HowItWorks/HowItWorks";
 
 const router = createBrowserRouter([
   {
@@ -85,6 +86,10 @@ const router = createBrowserRouter([
       {
         path: "/review",
         element: <Testimonials></Testimonials>,
+      },
+      {
+        path: "/how-it-works",
+        element: <HowItWorks></HowItWorks>,
       },
 
       {
