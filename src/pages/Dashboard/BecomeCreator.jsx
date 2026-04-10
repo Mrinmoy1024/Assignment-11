@@ -9,7 +9,8 @@ import {
 import { useNavigate } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 import axiosSecure from "../../Hooks/axiosSecure";
-
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router";
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const terms = [
@@ -68,11 +69,9 @@ const CheckoutForm = () => {
     setError(null);
 
     try {
-
       const { data } = await axiosSecure.post("/create-payment-intent", {
         price: 100,
       });
-
 
       const { paymentIntent, error: stripeError } =
         await stripe.confirmCardPayment(data.clientSecret, {
@@ -92,7 +91,6 @@ const CheckoutForm = () => {
       }
 
       if (paymentIntent.status === "succeeded") {
- 
         await axiosSecure.post("/creator-request", {
           userEmail: user?.email,
           userName: user?.displayName,
@@ -113,7 +111,6 @@ const CheckoutForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-  
       <div>
         <label className="text-xs text-gray-500 mb-2 block">Card Details</label>
         <div className="rounded-xl p-4 ">
@@ -131,7 +128,6 @@ const CheckoutForm = () => {
           />
         </div>
       </div>
-
 
       <label className="flex items-start gap-3 cursor-pointer">
         <input
@@ -180,8 +176,88 @@ const CheckoutForm = () => {
 };
 
 const BecomeCreator = () => {
+  const { user } = useAuth();
+
+  const { data: requestStatus, isLoading } = useQuery({
+    queryKey: ["creatorRequestStatus", user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const { data } = await axiosSecure.get(
+        `/creator-request/status?email=${user.email}`,
+      );
+      return data;
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="w-full flex justify-center py-20">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
+  if (requestStatus?.status === "rejected") {
+    return (
+      <div className="w-full flex flex-col items-center justify-center py-20 px-4 text-center">
+        <div className="bg-white rounded-2xl border border-[#e5e3f5] shadow-sm p-10 max-w-md w-full">
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center">
+              <span className="text-4xl">🚫</span>
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-700 mb-3">
+            Application Rejected
+          </h2>
+          <p className="text-gray-400 text-sm mb-8">
+            Your Creator application has been rejected by our admin team.
+            Unfortunately you are not eligible to reapply.
+          </p>
+          <div className="bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-8">
+            <p className="text-red-500 text-sm font-medium">
+              ❌ Your application has been permanently rejected
+            </p>
+          </div>
+          <Link
+            to="/dashboard"
+            className="btn bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none w-full"
+          >
+            Go to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (requestStatus?.status === "pending") {
+    return (
+      <div className="w-full flex flex-col items-center justify-center py-20 px-4 text-center">
+        <div className="bg-white rounded-2xl border border-[#e5e3f5] shadow-sm p-10 max-w-md w-full">
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 rounded-full bg-yellow-50 flex items-center justify-center">
+              <span className="text-4xl">⏳</span>
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-700 mb-3">
+            Request Already Pending
+          </h2>
+          <p className="text-gray-400 text-sm mb-8">
+            You already have a pending Creator request. Please wait for admin
+            review.
+          </p>
+          <Link
+            to="/dashboard"
+            className="btn bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none w-full"
+          >
+            Go to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full max-w-2xl mx-auto py-10 px-4">
+    <div className="w-full max-w-2xl  mx-auto py-10 px-4">
       <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-2">
         Become a Creator
       </h2>
@@ -190,7 +266,6 @@ const BecomeCreator = () => {
         <span className="text-[#625FA3] font-semibold">$100</span> to unlock
         Creator privileges and start hosting your own contests.
       </p>
-
 
       <div className="bg-white rounded-2xl border border-[#e5e3f5] shadow-sm p-6 mb-6 h-full overflow-y-auto space-y-4">
         <h3 className="text-base font-bold text-gray-700 sticky top-0 bg-white pb-2 border-b border-gray-100">
@@ -203,7 +278,6 @@ const BecomeCreator = () => {
           </div>
         ))}
       </div>
-
 
       <div className="bg-white rounded-2xl border border-[#e5e3f5] shadow-sm p-6">
         <h3 className="text-base font-bold text-gray-700 mb-4">

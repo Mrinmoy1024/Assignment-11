@@ -25,7 +25,6 @@ import { Link, useNavigate, Outlet, useMatch } from "react-router";
 import Footer from "../../components/Footer";
 import { toast } from "react-toastify";
 
-
 const StatCard = ({ icon: Icon, label, value, color, to }) => (
   <Link
     to={to}
@@ -64,7 +63,7 @@ const AdminDashboard = ({ stats }) => (
         label="Total Contests"
         value={stats?.totalContests}
         color="#C15B9C"
-        to="/dashboard/contests"
+        to="/dashboard/manage-contests"
       />
       <StatCard
         icon={CheckCircle}
@@ -81,18 +80,18 @@ const AdminDashboard = ({ stats }) => (
         to="/dashboard/manage-contests"
       />
       <StatCard
-        icon={Clock}
-        label="Pending User Approval"
-        value={stats?.pendingContests}
-        color="#f59e0b"
-        to="/dashboard/manage-contests"
+        icon={UserCog}
+        label="Creator Requests"
+        value={stats?.creatorRequests}
+        color="#3b82f6"
+        to="/dashboard/manage-users"
       />
       <StatCard
         icon={XCircle}
         label="Rejected Users"
-        value={stats?.pendingContests}
-        color="#f59e0b"
-        to="/dashboard/manage-contests"
+        value={stats?.rejectedUsers}
+        color="#ec4899"
+        to="/dashboard/rejected-users"
       />
     </div>
   </div>
@@ -186,7 +185,6 @@ const Dashboard = () => {
     navigate("/");
   };
 
-
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (!dropdownRef.current?.contains(e.target)) {
@@ -207,7 +205,7 @@ const Dashboard = () => {
   });
 
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ["stats", role, user?.email],
+    queryKey: ["stats", role, user?.email, "v2"],
     enabled: !!role && !!user?.email,
     queryFn: async () => {
       if (role === "admin") {
@@ -273,7 +271,7 @@ const Dashboard = () => {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 p-3 w-full text-red-500 hover:bg-red-50 text-sm"
+                  className="flex items-center gap-2 p-3 w-full cursor-pointer text-red-500 hover:bg-red-50 text-sm"
                 >
                   <LogOut size={16} /> Logout
                 </button>

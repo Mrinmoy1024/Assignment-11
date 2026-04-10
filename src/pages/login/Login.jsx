@@ -13,10 +13,19 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // ✅ shared function to get and save JWT
   const saveToken = async (email) => {
-    const { data } = await axios.post("http://localhost:3000/jwt", { email });
-    localStorage.setItem("token", data.token);
+    try {
+      console.log("Saving token for:", email);
+      const { data } = await axios.post("http://localhost:3000/jwt", { email });
+      console.log("Token received:", data.token);
+      localStorage.setItem("token", data.token);
+    } catch (err) {
+      console.error(
+        "Token save failed:",
+        err.response?.status,
+        err.response?.data,
+      );
+    }
   };
 
   const handleLogIn = async (event) => {

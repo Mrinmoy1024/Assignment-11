@@ -21,6 +21,8 @@ import MyContests from "./pages/Dashboard/MyContests";
 import Payment from "./pages/Payment/Payment";
 import BecomeCreator from "./pages/Dashboard/BecomeCreator";
 import RequestPending from "./pages/Dashboard/RequestPending";
+import CreatorRequest from "./pages/Dashboard/CreatorResquest";
+import RejectedUsers from "./pages/Dashboard/RejectedUsers";
 
 const router = createBrowserRouter([
   {
@@ -131,6 +133,14 @@ const router = createBrowserRouter([
       {
         path: "request-pending",
         element: <RequestPending></RequestPending>,
+      },
+      {
+        path: "manage-users",
+        element: <CreatorRequest></CreatorRequest>,
+      },
+      {
+        path: "rejected-users",
+        element: <RejectedUsers></RejectedUsers>,
       },
     ],
   },

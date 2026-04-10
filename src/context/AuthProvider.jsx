@@ -45,16 +45,26 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      if (currentUser?.email) {
+        // ✅ refresh token on every auth state change
+        try {
+          const { data } = await axios.post("http://localhost:3000/jwt", {
+            email: currentUser.email,
+          });
+          localStorage.setItem("token", data.token);
+        } catch (err) {
+          console.error("Token refresh failed:", err);
+        }
+      } else {
+        localStorage.removeItem("token");
+      }
       setLoading(false);
     });
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
-
   const authInfo = {
     createUser,
     updateUserProfile,
