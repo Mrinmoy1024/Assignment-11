@@ -11,6 +11,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase/firebase.config";
 import { AuthContext } from "./AuthContext";
+import axios from "axios";
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -45,24 +46,10 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      if (currentUser?.email) {
-        // ✅ refresh token on every auth state change
-        try {
-          const { data } = await axios.post("http://localhost:3000/jwt", {
-            email: currentUser.email,
-          });
-          localStorage.setItem("token", data.token);
-        } catch (err) {
-          console.error("Token refresh failed:", err);
-        }
-      } else {
-        localStorage.removeItem("token");
-      }
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
   const authInfo = {

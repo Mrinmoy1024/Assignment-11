@@ -8,7 +8,6 @@ import {
   PlusCircle,
   ShieldCheck,
   Award,
-  ListTodo,
   TrendingUp,
   Clock,
   CheckCircle,
@@ -16,10 +15,8 @@ import {
   Home,
   UserCog,
   LogOut,
-  ArrowLeft,
-  LucideTableOfContents,
-  Gamepad2,
   Gamepad2Icon,
+  Flag,
 } from "lucide-react";
 import { Link, useNavigate, Outlet, useMatch } from "react-router";
 import Footer from "../../components/Footer";
@@ -104,11 +101,11 @@ const CreatorDashboard = ({ stats }) => (
     </h2>
     <div className="grid grid-cols-2 gap-4 md:gap-8 w-full">
       <StatCard
-        icon={Award}
-        label="Submissions"
-        value={stats?.totalSubmissions}
+        icon={Flag}
+        label="My Contests"
+        value={stats?.myContests}
         color="#C15B9C"
-        to="/dashboard/submissions"
+        to="/dashboard/created-contests"
       />
       <StatCard
         icon={PlusCircle}
@@ -206,6 +203,8 @@ const Dashboard = () => {
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["stats", role, user?.email, "v2"],
     enabled: !!role && !!user?.email,
+    staleTime: 0,
+    refetchOnMount: true,
     queryFn: async () => {
       if (role === "admin") {
         const { data } = await axiosSecure.get("/admin/stats");

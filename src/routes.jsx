@@ -26,6 +26,8 @@ import RejectedUsers from "./pages/Dashboard/RejectedUsers";
 import PendingContests from "./pages/Dashboard/PendinContests";
 import ApprovedContests from "./pages/Dashboard/ApprovedContests";
 import DeclareWinner from "./pages/Dashboard/DeclareWInner";
+import CreatedContests from "./pages/Dashboard/CreatorContests";
+import Analytics from "./pages/Dashboard/Analytics";
 
 const router = createBrowserRouter([
   {
@@ -156,6 +158,22 @@ const router = createBrowserRouter([
       {
         path: "declare-winner",
         element: <DeclareWinner></DeclareWinner>,
+      },
+      {
+        path: "created-contests",
+        element: (
+          <CreatorRoute>
+            <CreatedContests></CreatedContests>
+          </CreatorRoute>
+        ),
+      },
+      {
+        path: "analytics",
+        element: (
+          <CreatorRoute>
+            <Analytics />
+          </CreatorRoute>
+        ),
       },
     ],
   },

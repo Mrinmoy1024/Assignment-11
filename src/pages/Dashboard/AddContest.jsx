@@ -64,6 +64,13 @@ const AddContest = () => {
         const url = data.data.url;
         setForm((prev) => ({ ...prev, image: url }));
         setPreviewUrl(url);
+        Swal.fire({
+          title: "Upload Successful!",
+          text: "Image uploaded successfully.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
       } else {
         Swal.fire({
           title: "Upload Failed",
@@ -86,10 +93,11 @@ const AddContest = () => {
 
   const mutation = useMutation({
     mutationFn: async (contestData) => {
-      await axiosSecure.post("/contest", contestData);
+      const response = await axiosSecure.post("/contest", contestData);
+      return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["stats"]);
+      queryClient.invalidateQueries({ queryKey: ["stats"], exact: false });
       queryClient.invalidateQueries(["myContests", user?.email]);
       Swal.fire({
         title: "Contest Created!",
@@ -97,14 +105,19 @@ const AddContest = () => {
         icon: "success",
         confirmButtonColor: "#625FA3",
         confirmButtonText: "Great!",
+      }).then(() => {
+        navigate("/dashboard/my-contests");
       });
       setForm(initialForm);
       setPreviewUrl("");
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Contest creation error:", error);
       Swal.fire({
         title: "Failed!",
-        text: "Something went wrong. Please try again.",
+        text:
+          error.response?.data?.message ||
+          "Something went wrong. Please try again.",
         icon: "error",
         confirmButtonColor: "#e53e3e",
       });
@@ -113,6 +126,16 @@ const AddContest = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!form.name.trim()) {
+      Swal.fire({
+        title: "Missing Field",
+        text: "Please enter a contest name.",
+        icon: "warning",
+        confirmButtonColor: "#625FA3",
+      });
+      return;
+    }
 
     if (!form.contestType) {
       Swal.fire({
@@ -134,23 +157,95 @@ const AddContest = () => {
       return;
     }
 
-    mutation.mutate({
-      ...form,
+    if (!form.description.trim()) {
+      Swal.fire({
+        title: "Missing Field",
+        text: "Please enter a description.",
+        icon: "warning",
+        confirmButtonColor: "#625FA3",
+      });
+      return;
+    }
+
+    if (!form.taskInstruction.trim()) {
+      Swal.fire({
+        title: "Missing Field",
+        text: "Please enter task instructions.",
+        icon: "warning",
+        confirmButtonColor: "#625FA3",
+      });
+      return;
+    }
+
+    if (!form.price || form.price <= 0) {
+      Swal.fire({
+        title: "Invalid Price",
+        text: "Please enter a valid entry price greater than 0.",
+        icon: "warning",
+        confirmButtonColor: "#625FA3",
+      });
+      return;
+    }
+
+    if (!form.prizeMoney || form.prizeMoney <= 0) {
+      Swal.fire({
+        title: "Invalid Prize Money",
+        text: "Please enter a valid prize money greater than 0.",
+        icon: "warning",
+        confirmButtonColor: "#625FA3",
+      });
+      return;
+    }
+
+    if (!form.deadline) {
+      Swal.fire({
+        title: "Missing Field",
+        text: "Please select a deadline date.",
+        icon: "warning",
+        confirmButtonColor: "#625FA3",
+      });
+      return;
+    }
+
+    const selectedDate = new Date(form.deadline);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate <= today) {
+      Swal.fire({
+        title: "Invalid Deadline",
+        text: "Deadline must be a future date.",
+        icon: "warning",
+        confirmButtonColor: "#625FA3",
+      });
+      return;
+    }
+
+    const contestData = {
+      name: form.name.trim(),
+      image: form.image,
+      description: form.description.trim(),
       price: Number(form.price),
       prizeMoney: Number(form.prizeMoney),
+      taskInstruction: form.taskInstruction.trim(),
+      contestType: form.contestType,
+      deadline: form.deadline,
       createdBy: user?.email,
       status: "pending",
       createdAt: new Date(),
-    });
+    };
+
+    console.log("Submitting contest:", contestData);
+    mutation.mutate(contestData);
   };
 
   return (
     <div className="w-full max-w-2xl mx-auto py-10 px-4">
-      <div className="flex justify-between">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-700">
           Add New Contest
         </h2>
-        <button className="btn" onClick={() => navigate(-1)}>
+        <button type="button" onClick={() => navigate(-1)} className="btn ">
           Back
         </button>
       </div>
@@ -159,7 +254,7 @@ const AddContest = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-xs text-gray-500 mb-1 block">
-              Contest Name
+              Contest Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -174,21 +269,21 @@ const AddContest = () => {
 
           <div>
             <label className="text-xs text-gray-500 mb-1 block">
-              Contest Image
+              Contest Image <span className="text-red-500">*</span>
             </label>
 
             <div className="flex gap-2 mb-3">
               <button
                 type="button"
                 onClick={() => setImageMode("url")}
-                className={`btn btn-sm flex-1 ${imageMode === "url" ? "bg-[#625FA3] text-white border-none" : " border border-gray-200"}`}
+                className={`btn btn-sm flex-1 ${imageMode === "url" ? "bg-[#625FA3] text-white border-none" : "border border-gray-200"}`}
               >
                 Enter URL
               </button>
               <button
                 type="button"
                 onClick={() => setImageMode("upload")}
-                className={`btn btn-sm flex-1 ${imageMode === "upload" ? "bg-[#625FA3] text-white border-none" : " border border-gray-200"}`}
+                className={`btn btn-sm flex-1 ${imageMode === "upload" ? "bg-[#625FA3] text-white border-none" : "border border-gray-200"}`}
               >
                 Upload File
               </button>
@@ -196,7 +291,7 @@ const AddContest = () => {
 
             {imageMode === "url" ? (
               <input
-                type="text"
+                type="url"
                 name="image"
                 value={form.image}
                 onChange={handleChange}
@@ -234,18 +329,27 @@ const AddContest = () => {
             )}
 
             {previewUrl && (
-              <img
-                src={previewUrl}
-                alt="Preview"
-                className="mt-3 w-full h-40 object-cover rounded-lg"
-                onError={(e) => (e.target.style.display = "none")}
-              />
+              <div className="mt-3">
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className="w-full h-40 object-cover rounded-lg"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    Swal.fire({
+                      title: "Invalid Image URL",
+                      text: "The image URL is not valid. Please provide a valid image URL.",
+                      icon: "error",
+                    });
+                  }}
+                />
+              </div>
             )}
           </div>
 
           <div>
             <label className="text-xs text-gray-500 mb-1 block">
-              Description
+              Description <span className="text-red-500">*</span>
             </label>
             <textarea
               name="description"
@@ -260,7 +364,7 @@ const AddContest = () => {
 
           <div>
             <label className="text-xs text-gray-500 mb-1 block">
-              Task Instruction
+              Task Instruction <span className="text-red-500">*</span>
             </label>
             <textarea
               name="taskInstruction"
@@ -276,7 +380,7 @@ const AddContest = () => {
           <div className="flex gap-3">
             <div className="flex-1">
               <label className="text-xs text-gray-500 mb-1 block">
-                Entry Price ($)
+                Entry Price ($) <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -285,13 +389,14 @@ const AddContest = () => {
                 onChange={handleChange}
                 placeholder="e.g. 10"
                 required
-                min={0}
+                min={1}
+                step="0.01"
                 className="input input-bordered w-full"
               />
             </div>
             <div className="flex-1">
               <label className="text-xs text-gray-500 mb-1 block">
-                Prize Money ($)
+                Prize Money ($) <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -300,7 +405,8 @@ const AddContest = () => {
                 onChange={handleChange}
                 placeholder="e.g. 1000"
                 required
-                min={0}
+                min={1}
+                step="0.01"
                 className="input input-bordered w-full"
               />
             </div>
@@ -308,12 +414,13 @@ const AddContest = () => {
 
           <div>
             <label className="text-xs text-gray-500 mb-1 block">
-              Contest Type
+              Contest Type <span className="text-red-500">*</span>
             </label>
             <select
               name="contestType"
               value={form.contestType}
               onChange={handleChange}
+              required
               className="select select-bordered w-full"
             >
               <option value="">Select a type</option>
@@ -326,7 +433,9 @@ const AddContest = () => {
           </div>
 
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Deadline</label>
+            <label className="text-xs text-gray-500 mb-1 block">
+              Deadline <span className="text-red-500">*</span>
+            </label>
             <input
               type="date"
               name="deadline"
@@ -346,7 +455,8 @@ const AddContest = () => {
               type="text"
               value={user?.email || ""}
               readOnly
-              className="input input-bordered w-full bg-gray-50 text-gray-400 cursor-not-allowed"
+              disabled
+              className="input input-bordered w-full bg-gray-50 text-gray-500 cursor-not-allowed"
             />
           </div>
 
@@ -354,9 +464,10 @@ const AddContest = () => {
             <label className="text-xs text-gray-500 mb-1 block">Status</label>
             <input
               type="text"
-              value="pending"
+              value="Pending Review"
               readOnly
-              className="input input-bordered w-full bg-gray-50 text-yellow-500 cursor-not-allowed"
+              disabled
+              className="input input-bordered w-full bg-gray-50 text-yellow-600 cursor-not-allowed font-medium"
             />
           </div>
 
@@ -364,9 +475,16 @@ const AddContest = () => {
             <button
               type="submit"
               disabled={mutation.isPending || uploading}
-              className="btn w-full bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none"
+              className="btn w-full bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none disabled:opacity-50"
             >
-              {mutation.isPending ? "Submitting..." : "Submit Contest"}
+              {mutation.isPending ? (
+                <>
+                  <span className="loading loading-spinner loading-sm"></span>
+                  Submitting...
+                </>
+              ) : (
+                "Submit Contest"
+              )}
             </button>
           </div>
         </form>

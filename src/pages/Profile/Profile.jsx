@@ -53,7 +53,7 @@ const Profile = () => {
           </h2>
         </div>
         <div>
-          <button className="btn " onSubmit={handleGoBack}>Go Back</button>
+          <button className="btn " onClick={handleGoBack}>Go Back</button>
         </div>
       </div>
 

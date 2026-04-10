@@ -4,6 +4,7 @@ import axiosSecure from "../../Hooks/axiosSecure";
 import useAuth from "../../Hooks/useAuth";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router";
 
 const DeclareWinner = () => {
   const { user } = useAuth();
@@ -74,7 +75,7 @@ const DeclareWinner = () => {
     if (status === "rejected") return "bg-red-100 text-red-600";
     return "bg-gray-100 text-gray-600";
   };
-
+  const navigate = useNavigate();
   if (contestsLoading) {
     return (
       <div className="w-full flex justify-center py-20">
@@ -85,9 +86,14 @@ const DeclareWinner = () => {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
-        Declare Winner
-      </h2>
+      <div className="flex justify-between">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
+          Declare Winner
+        </h2>
+        <button onClick={() => navigate(-1)} className="btn">
+          Back
+        </button>
+      </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-white rounded-2xl border border-[#e5e3f5] shadow-sm overflow-hidden">

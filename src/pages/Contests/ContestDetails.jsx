@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import axiosSecure from "../../Hooks/axiosSecure";
 import useAuth from "../../Hooks/useAuth";
+import { toast } from "react-toastify";
 
 function useCountdown(deadline) {
   const [timeLeft, setTimeLeft] = useState(null);
@@ -57,7 +58,6 @@ function ContestDetails() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-
   const { data: alreadyJoined = false } = useQuery({
     queryKey: ["joined", id, user?.email],
     enabled: !!user?.email && !!id,
@@ -81,6 +81,11 @@ function ContestDetails() {
       navigate("/login");
       return;
     }
+    if (contest.status !== "allowed") {
+      toast.error("This contest is not available for registration.");
+      return;
+    }
+
     navigate(`/payment/${id}`);
   };
 
@@ -157,18 +162,19 @@ function ContestDetails() {
 
             <div className="flex gap-10">
               <button
-              onClick={handleRegister}
-              disabled={isDisabled}
-              className="mt-5 cursor-pointer px-6 py-2 bg-[#625FA3] hover:bg-[#4f4d8a] text-white rounded-lg disabled:bg-gray-500 disabled:cursor-not-allowed transition"
-            >
-              {buttonLabel}
-            </button>
-            <button onClick={()=>navigate(-1)} className="btn mt-11">Back</button>
+                onClick={handleRegister}
+                disabled={isDisabled}
+                className="mt-5 cursor-pointer px-6 py-2 bg-[#625FA3] hover:bg-[#4f4d8a] text-white rounded-lg disabled:bg-gray-500 disabled:cursor-not-allowed transition"
+              >
+                {buttonLabel}
+              </button>
+              <button onClick={() => navigate(-1)} className="btn mt-11">
+                Back
+              </button>
             </div>
           </div>
         </div>
 
-      
         {contest.winner && (
           <div className="mt-6 flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
             <img
