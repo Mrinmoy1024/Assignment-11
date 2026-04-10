@@ -64,14 +64,14 @@ const AdminDashboard = ({ stats }) => (
         label="Total Contests"
         value={stats?.totalContests}
         color="#C15B9C"
-        to="/dashboard/manage-contests"
+        to="/dashboard/contests"
       />
       <StatCard
         icon={CheckCircle}
         label="Approved Contests"
         value={stats?.approvedContests}
         color="#6EB18E"
-        to="/dashboard/manage-contests"
+        to="/dashboard/approved-contests"
       />
       <StatCard
         icon={Clock}

@@ -24,6 +24,7 @@ import RequestPending from "./pages/Dashboard/RequestPending";
 import CreatorRequest from "./pages/Dashboard/CreatorResquest";
 import RejectedUsers from "./pages/Dashboard/RejectedUsers";
 import PendingContests from "./pages/Dashboard/PendinContests";
+import ApprovedContests from "./pages/Dashboard/ApprovedContests";
 
 const router = createBrowserRouter([
   {
@@ -146,6 +147,10 @@ const router = createBrowserRouter([
       {
         path: "manage-contests",
         element: <PendingContests></PendingContests>,
+      },
+      {
+        path: "approved-contests",
+        element: <ApprovedContests></ApprovedContests>,
       },
     ],
   },
