@@ -29,6 +29,7 @@ import DeclareWinner from "./pages/Dashboard/DeclareWInner";
 import CreatedContests from "./pages/Dashboard/CreatorContests";
 import Analytics from "./pages/Dashboard/Analytics";
 import TotalWins from "./pages/Dashboard/TotalWins";
+import Testimonials from "./pages/review/Testimonials";
 
 const router = createBrowserRouter([
   {
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
             <Payment />
           </PrivateRoute>
         ),
+      },
+      {
+        path: "/review",
+        element: <Testimonials></Testimonials>,
       },
 
       {
