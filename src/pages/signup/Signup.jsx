@@ -84,7 +84,6 @@ const Signup = () => {
       const result = await signInWithGoogle();
       const { displayName, email, photoURL } = result.user;
 
-      // Save to DB if new, or skip if existing — always get token
       await saveUserToDb({
         name: displayName,
         email,
@@ -95,6 +94,12 @@ const Signup = () => {
       toast.success("Welcome! 🎉");
       navigate("/");
     } catch (error) {
+      if (
+        error.code === "auth/popup-closed-by-user" ||
+        error.code === "auth/cancelled-popup-request"
+      ) {
+        return;
+      }
       toast.error(error.response?.data?.message || error.message);
     } finally {
       setRegistering(false);

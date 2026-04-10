@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosSecure from "../../Hooks/axiosSecure";
 import Swal from "sweetalert2";
 import useAuth from "../../Hooks/useAuth";
+import { useNavigate } from "react-router";
 
 const contestTypes = [
   "General",
@@ -84,13 +85,18 @@ const AddContest = () => {
       createdAt: new Date(),
     });
   };
-
+  const navigate = useNavigate();
   return (
     <div className="w-full max-w-2xl mx-auto py-10 px-4">
-      <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
-        Add New Contest
-      </h2>
-
+      <div className="flex justify-between">
+        {" "}
+        <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
+          Add New Contest
+        </h2>
+        <button className="btn" onClick={() => navigate(-1)}>
+          Back
+        </button>
+      </div>
       <div className="bg-white rounded-2xl shadow-sm border border-[#e5e3f5] p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

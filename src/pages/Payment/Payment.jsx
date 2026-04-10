@@ -175,7 +175,7 @@ const Payment = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-[#f5f4fc]">
+    <div className="min-h-screen back flex items-center justify-center px-4 py-10 bg-[#f5f4fc]">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-[#e5e3f5] p-6">
         <h2 className="text-xl font-bold text-gray-700 mb-6 text-center">
           Complete Payment

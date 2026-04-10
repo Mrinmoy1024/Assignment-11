@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase/firebase.config";
 
 const Login = () => {
   const { signInUser, signInWithGoogle } = useContext(AuthContext);
@@ -36,8 +38,7 @@ const Login = () => {
     try {
       setLoading(true);
       await signInUser(email, password);
-      await saveToken(email); // ✅ save JWT after login
-      event.target.reset();
+      await saveToken(email);
       toast.success("Logged in successfully!");
       navigate(location.state?.from || "/");
     } catch (error) {
@@ -52,16 +53,38 @@ const Login = () => {
       setLoading(true);
       const result = await signInWithGoogle();
       const { email } = result.user;
-      await saveToken(email); // ✅ save JWT after Google login
-      toast.success("Logged in successfully!");
-      navigate(location.state?.from || "/");
+
+      try {
+        await axios.get(`http://localhost:3000/users/check?email=${email}`);
+
+        toast.error("No account found. Please sign up first.");
+        await signOut(auth);
+        setLoading(false);
+        return;
+      } catch (err) {
+        if (err.response?.status === 409) {
+          const { data } = await axios.post("http://localhost:3000/jwt", {
+            email,
+          });
+          localStorage.setItem("token", data.token);
+          toast.success("Logged in successfully!");
+          navigate(location.state?.from || "/");
+        } else {
+          throw err;
+        }
+      }
     } catch (error) {
+      if (
+        error.code === "auth/popup-closed-by-user" ||
+        error.code === "auth/cancelled-popup-request"
+      ) {
+        return;
+      }
       toast.error(error.response?.data?.message || error.message);
     } finally {
       setLoading(false);
     }
   };
-
   if (loading) {
     return (
       <div
