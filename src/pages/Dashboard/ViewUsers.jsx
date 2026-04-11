@@ -9,6 +9,7 @@ const ViewUsers = () => {
   const queryClient = useQueryClient();
   const [editUser, setEditUser] = useState(null);
   const [newRole, setNewRole] = useState("");
+  const navigate = useNavigate();
 
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["users"],
@@ -52,15 +53,10 @@ const ViewUsers = () => {
       confirmButtonText: "Yes, delete!",
       cancelButtonText: "Cancel",
     }).then((result) => {
-      if (result.isConfirmed) {
-        deleteMutation.mutate(id);
-      }
+      if (result.isConfirmed) deleteMutation.mutate(id);
     });
   };
-  const navigate = useNavigate();
-  const handleGoBack = () => {
-    navigate("/dashboard");
-  };
+
   const handleUpdate = () => {
     if (!newRole) return toast.error("Please select a role");
     updateMutation.mutate({ id: editUser._id, role: newRole });
@@ -76,16 +72,21 @@ const ViewUsers = () => {
 
   return (
     <div className="w-full pb-55">
-      <div className="flex justify-between">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-base-content">
           All Users ({users.length})
         </h2>
-        <button className="btn" onClick={handleGoBack}>
+        <button
+          className="btn btn-sm !bg-[#625FA3] text-white border-none hover:!bg-[#4f4d8a]"
+          onClick={() => navigate("/dashboard")}
+        >
           Back
         </button>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-[#e5e3f5] shadow-sm">
+      {/* Table */}
+      <div className="overflow-x-auto rounded-2xl border border-base-300 shadow-sm">
         <table className="table w-full">
           <thead className="bg-[#625FA3] text-white">
             <tr>
@@ -101,9 +102,9 @@ const ViewUsers = () => {
             {users.map((user, index) => (
               <tr
                 key={user._id}
-                className="hover:bg-[#2e011b] transition-colors"
+                className="hover:bg-base-200 transition-colors"
               >
-                <td>{index + 1}</td>
+                <td className="text-base-content">{index + 1}</td>
                 <td>
                   <img
                     src={user.photoURL || "https://i.ibb.co/MgsTCcv/avater.jpg"}
@@ -111,8 +112,8 @@ const ViewUsers = () => {
                     className="w-10 h-10 rounded-xl object-cover"
                   />
                 </td>
-                <td className="font-medium text-black">{user.name}</td>
-                <td className="text-black text-sm">{user.email}</td>
+                <td className="font-medium text-base-content">{user.name}</td>
+                <td className="text-base-content/70 text-sm">{user.email}</td>
                 <td>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${
@@ -120,7 +121,7 @@ const ViewUsers = () => {
                         ? "bg-purple-100 text-purple-600"
                         : user.role === "creator"
                           ? "bg-pink-100 text-pink-600"
-                          : "bg-gray-100 text-gray-600"
+                          : "bg-base-200 text-base-content/60"
                     }`}
                   >
                     {user.role}
@@ -132,7 +133,7 @@ const ViewUsers = () => {
                       setEditUser(user);
                       setNewRole(user.role);
                     }}
-                    className="btn btn-sm bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none"
+                    className="btn btn-sm !bg-[#625FA3] text-white hover:!bg-[#4f4d8a] border-none"
                   >
                     Update
                   </button>
@@ -150,29 +151,33 @@ const ViewUsers = () => {
         </table>
       </div>
 
+      {/* Edit Modal */}
       {editUser && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl">
-            <h3 className="text-lg font-bold text-gray-700 mb-1">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-base-100 border border-base-300 rounded-2xl p-6 w-full max-w-sm shadow-xl">
+            <h3 className="text-lg font-bold text-base-content mb-1">
               Update Role
             </h3>
-            <p className="text-sm text-gray-400 mb-4">{editUser.email}</p>
+            <p className="text-sm text-base-content/50 mb-4">{editUser.email}</p>
             <select
               value={newRole}
               onChange={(e) => setNewRole(e.target.value)}
-              className="select select-bordered w-full mb-4"
+              className="w-full bg-base-200 border border-base-300 focus:border-[#C15B9C] text-base-content rounded-lg px-4 py-2.5 text-sm outline-none transition mb-4 cursor-pointer"
             >
               <option value="general user">General User</option>
               <option value="creator">Creator</option>
               <option value="admin">Admin</option>
             </select>
             <div className="flex gap-2 justify-end">
-              <button onClick={() => setEditUser(null)} className="btn btn-sm">
+              <button
+                onClick={() => setEditUser(null)}
+                className="btn btn-sm bg-base-200 border border-base-300 text-base-content hover:bg-base-300"
+              >
                 Cancel
               </button>
               <button
                 onClick={handleUpdate}
-                className="btn btn-sm bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none"
+                className="btn btn-sm !bg-[#625FA3] text-white hover:!bg-[#4f4d8a] border-none"
                 disabled={updateMutation.isPending}
               >
                 {updateMutation.isPending ? "Saving..." : "Save"}

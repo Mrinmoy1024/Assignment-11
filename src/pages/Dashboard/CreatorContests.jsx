@@ -18,15 +18,19 @@ const contestTypes = [
 ];
 
 const statusColor = (status) => {
-  if (status === "allowed") return "bg-green-100 text-green-600";
-  if (status === "pending") return "bg-yellow-100 text-yellow-600";
-  if (status === "rejected") return "bg-red-100 text-red-600";
-  return "bg-gray-100 text-gray-600";
+  if (status === "allowed")
+    return "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400";
+  if (status === "pending")
+    return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400";
+  if (status === "rejected")
+    return "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400";
+  return "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
 };
 
 const CreatedContests = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [editContest, setEditContest] = useState(null);
 
   const { data: contests = [], isLoading } = useQuery({
@@ -79,7 +83,7 @@ const CreatedContests = () => {
       if (result.isConfirmed) deleteMutation.mutate(id);
     });
   };
-  const navigate = useNavigate();
+
   const handleUpdate = () => {
     updateMutation.mutate({
       id: editContest._id,
@@ -99,83 +103,101 @@ const CreatedContests = () => {
   if (isLoading) {
     return (
       <div className="w-full flex justify-center py-20">
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="loading loading-spinner loading-lg text-[#625FA3]"></span>
       </div>
     );
   }
 
   return (
     <div className="w-full">
-      <div className="flex justify-between">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-700 dark:text-gray-100">
           My Created Contests ({contests.length})
         </h2>
-        <button className="btn" onClick={() => navigate("/dashboard")}>
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="px-4 py-2 rounded-lg text-sm font-medium bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+        >
           Dashboard
         </button>
       </div>
 
       {contests.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
+        <div className="text-center py-20 text-gray-400 dark:text-gray-500">
           You haven't created any contests yet.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-[#e5e3f5] shadow-sm">
-          <table className="table w-full">
-            <thead className="bg-[#625FA3] text-white">
+        <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+          <table className="w-full text-sm">
+            <thead className="bg-[#625FA3] text-white text-xs uppercase tracking-wider">
               <tr>
-                <th>#</th>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Price</th>
-                <th>Prize</th>
-                <th>Deadline</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th className="px-4 py-3 text-left">#</th>
+                <th className="px-4 py-3 text-left">Image</th>
+                <th className="px-4 py-3 text-left">Name</th>
+                <th className="px-4 py-3 text-left">Type</th>
+                <th className="px-4 py-3 text-left">Price</th>
+                <th className="px-4 py-3 text-left">Prize</th>
+                <th className="px-4 py-3 text-left">Deadline</th>
+                <th className="px-4 py-3 text-left">Status</th>
+                <th className="px-4 py-3 text-left">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-900">
               {contests.map((contest, index) => (
                 <tr
                   key={contest._id}
-                  className="hover:bg-[#b30d81] transition-colors"
+                  className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
-                  <td>{index + 1}</td>
-                  <td>
+                  <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
+                    {index + 1}
+                  </td>
+                  <td className="px-4 py-3">
                     <img
                       src={contest.image || "https://placehold.co/60x40"}
                       alt={contest.name}
                       className="w-14 h-10 rounded-lg object-cover"
                     />
                   </td>
-                  <td className="font-medium text-black max-w-[150px] truncate">
+                  <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-100 max-w-[150px] truncate">
                     {contest.name}
                   </td>
-                  <td className="text-black text-sm">{contest.contestType}</td>
-                  <td className="text-black text-sm">${contest.price}</td>
-                  <td className="text-black text-sm">${contest.prizeMoney}</td>
-                  <td className="text-black text-sm">{contest.deadline}</td>
-                  <td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                    {contest.contestType}
+                  </td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                    ${contest.price}
+                  </td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
+                    ${contest.prizeMoney}
+                  </td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                    {contest.deadline}
+                  </td>
+                  <td className="px-4 py-3">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${statusColor(contest.status)}`}
                     >
                       {contest.status}
                     </span>
                   </td>
-                  <td className="space-x-2">
-                    <button
-                      onClick={() => setEditContest(contest)}
-                      className="btn btn-sm bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none "
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(contest._id, contest.status)}
-                      className="btn btn-sm bg-red-500 text-white hover:bg-red-600 border-none "
-                    >
-                      Delete
-                    </button>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setEditContest(contest)}
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#625FA3] hover:bg-[#4f4d8a] text-white transition"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleDelete(contest._id, contest.status)
+                        }
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-500 hover:bg-red-600 text-white transition"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -184,26 +206,31 @@ const CreatedContests = () => {
         </div>
       )}
 
+      {/* Edit Modal */}
       {editContest && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-bold text-gray-700 mb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto border border-gray-100 dark:border-gray-700">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
               Edit Contest
             </h3>
+
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-gray-500 mb-1 block">Name</label>
+                <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
+                  Name
+                </label>
                 <input
                   type="text"
                   value={editContest.name}
                   onChange={(e) =>
                     setEditContest({ ...editContest, name: e.target.value })
                   }
-                  className="input input-bordered w-full"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#625FA3]"
                 />
               </div>
+
               <div>
-                <label className="text-xs text-gray-500 mb-1 block">
+                <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
                   Image URL
                 </label>
                 <input
@@ -212,7 +239,7 @@ const CreatedContests = () => {
                   onChange={(e) =>
                     setEditContest({ ...editContest, image: e.target.value })
                   }
-                  className="input input-bordered w-full"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#625FA3]"
                 />
                 {editContest.image && (
                   <img
@@ -223,8 +250,9 @@ const CreatedContests = () => {
                   />
                 )}
               </div>
+
               <div>
-                <label className="text-xs text-gray-500 mb-1 block">
+                <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
                   Contest Type
                 </label>
                 <select
@@ -235,7 +263,7 @@ const CreatedContests = () => {
                       contestType: e.target.value,
                     })
                   }
-                  className="select select-bordered w-full"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#625FA3]"
                 >
                   {contestTypes.map((type) => (
                     <option key={type} value={type}>
@@ -244,9 +272,10 @@ const CreatedContests = () => {
                   ))}
                 </select>
               </div>
+
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <label className="text-xs text-gray-500 mb-1 block">
+                  <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
                     Price ($)
                   </label>
                   <input
@@ -255,12 +284,12 @@ const CreatedContests = () => {
                     onChange={(e) =>
                       setEditContest({ ...editContest, price: e.target.value })
                     }
-                    className="input input-bordered w-full"
+                    className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#625FA3]"
                     min={0}
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="text-xs text-gray-500 mb-1 block">
+                  <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
                     Prize Money ($)
                   </label>
                   <input
@@ -272,13 +301,14 @@ const CreatedContests = () => {
                         prizeMoney: e.target.value,
                       })
                     }
-                    className="input input-bordered w-full"
+                    className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#625FA3]"
                     min={0}
                   />
                 </div>
               </div>
+
               <div>
-                <label className="text-xs text-gray-500 mb-1 block">
+                <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
                   Deadline
                 </label>
                 <input
@@ -287,11 +317,12 @@ const CreatedContests = () => {
                   onChange={(e) =>
                     setEditContest({ ...editContest, deadline: e.target.value })
                   }
-                  className="input input-bordered w-full"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#625FA3]"
                 />
               </div>
+
               <div>
-                <label className="text-xs text-gray-500 mb-1 block">
+                <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
                   Description
                 </label>
                 <textarea
@@ -302,12 +333,13 @@ const CreatedContests = () => {
                       description: e.target.value,
                     })
                   }
-                  className="textarea textarea-bordered w-full"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#625FA3] resize-none"
                   rows={3}
                 />
               </div>
+
               <div>
-                <label className="text-xs text-gray-500 mb-1 block">
+                <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">
                   Task Instruction
                 </label>
                 <textarea
@@ -318,21 +350,22 @@ const CreatedContests = () => {
                       taskInstruction: e.target.value,
                     })
                   }
-                  className="textarea textarea-bordered w-full"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#625FA3] resize-none"
                   rows={3}
                 />
               </div>
             </div>
+
             <div className="flex gap-2 justify-end mt-5">
               <button
                 onClick={() => setEditContest(null)}
-                className="btn btn-sm btn-ghost"
+                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdate}
-                className="btn btn-sm bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none"
+                className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#625FA3] hover:bg-[#4f4d8a] text-white transition"
               >
                 {updateMutation.isPending ? "Saving..." : "Save Changes"}
               </button>

@@ -3,7 +3,9 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchLeaderboard = async () => {
-  const { data } = await axios.get("http://localhost:3000/leaderboard");
+  const { data } = await axios.get(
+    "https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/leaderboard",
+  );
   return data;
 };
 
@@ -41,7 +43,7 @@ const Leaderboard = () => {
           </div>
         ) : (
           <>
-            {/* Top 3 Cards */}
+     
             <div className="flex flex-wrap justify-center gap-6 mb-12">
               {top3.map((leader, index) => (
                 <div
@@ -82,7 +84,7 @@ const Leaderboard = () => {
               ))}
             </div>
 
-            {/* Rest of the table */}
+          
             {others.length > 0 && (
               <div className="bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden shadow-xl border border-white/20">
                 <table className="w-full">

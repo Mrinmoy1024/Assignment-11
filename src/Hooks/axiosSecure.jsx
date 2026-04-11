@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/",
 });
 
 

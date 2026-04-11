@@ -6,11 +6,11 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 import axiosSecure from "../../Hooks/axiosSecure";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router";
+
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const terms = [
@@ -112,15 +112,17 @@ const CheckoutForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label className="text-xs text-gray-500 mb-2 block">Card Details</label>
-        <div className="rounded-xl p-4 ">
+        <label className="text-xs text-base-content/50 mb-2 block">
+          Card Details
+        </label>
+        <div className="bg-base-200 border border-base-300 rounded-xl p-4">
           <CardElement
             options={{
               style: {
                 base: {
                   fontSize: "16px",
-                  color: "#374151",
-                  "::placeholder": { color: "#9ca3af" },
+                  color: "#a0a0b0",
+                  "::placeholder": { color: "#6b6b8a" },
                 },
                 invalid: { color: "#ef4444" },
               },
@@ -134,9 +136,9 @@ const CheckoutForm = () => {
           type="checkbox"
           checked={agreed}
           onChange={(e) => setAgreed(e.target.checked)}
-          className="checkbox checkbox-sm border border-gray-800 checked:bg-black mt-0.5"
+          className="checkbox checkbox-sm border border-base-300 mt-0.5"
         />
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-base-content/70">
           I have read and agree to the Creator Terms & Conditions above.
         </span>
       </label>
@@ -151,14 +153,14 @@ const CheckoutForm = () => {
         <button
           type="button"
           onClick={() => window.history.back()}
-          className="btn flex-1 border border-gray-200"
+          className="btn flex-1 bg-base-200 border border-base-300 text-base-content hover:bg-base-300"
         >
           Go Back
         </button>
         <button
           type="submit"
           disabled={!stripe || processing || !agreed}
-          className="btn flex-1 bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none disabled:opacity-50"
+          className="btn flex-1 !bg-[#625FA3] text-white hover:!bg-[#4f4d8a] border-none disabled:opacity-50"
         >
           {processing ? (
             <span className="loading loading-spinner loading-sm" />
@@ -168,7 +170,7 @@ const CheckoutForm = () => {
         </button>
       </div>
 
-      <p className="text-center text-xs text-gray-400">
+      <p className="text-center text-xs text-base-content/40">
         Secured by Stripe. Your card info is never stored.
       </p>
     </form>
@@ -200,16 +202,16 @@ const BecomeCreator = () => {
   if (requestStatus?.status === "rejected") {
     return (
       <div className="w-full flex flex-col items-center justify-center py-20 px-4 text-center">
-        <div className="bg-white rounded-2xl border border-[#e5e3f5] shadow-sm p-10 max-w-md w-full">
+        <div className="bg-base-100 border border-base-300 rounded-2xl shadow-sm p-10 max-w-md w-full">
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center">
               <span className="text-4xl">🚫</span>
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-700 mb-3">
+          <h2 className="text-2xl font-bold text-base-content mb-3">
             Application Rejected
           </h2>
-          <p className="text-gray-400 text-sm mb-8">
+          <p className="text-base-content/50 text-sm mb-8">
             Your Creator application has been rejected by our admin team.
             Unfortunately you are not eligible to reapply.
           </p>
@@ -220,7 +222,7 @@ const BecomeCreator = () => {
           </div>
           <Link
             to="/dashboard"
-            className="btn bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none w-full"
+            className="btn !bg-[#625FA3] text-white hover:!bg-[#4f4d8a] border-none w-full"
           >
             Go to Dashboard
           </Link>
@@ -232,22 +234,22 @@ const BecomeCreator = () => {
   if (requestStatus?.status === "pending") {
     return (
       <div className="w-full flex flex-col items-center justify-center py-20 px-4 text-center">
-        <div className="bg-white rounded-2xl border border-[#e5e3f5] shadow-sm p-10 max-w-md w-full">
+        <div className="bg-base-100 border border-base-300 rounded-2xl shadow-sm p-10 max-w-md w-full">
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 rounded-full bg-yellow-50 flex items-center justify-center">
               <span className="text-4xl">⏳</span>
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-700 mb-3">
+          <h2 className="text-2xl font-bold text-base-content mb-3">
             Request Already Pending
           </h2>
-          <p className="text-gray-400 text-sm mb-8">
+          <p className="text-base-content/50 text-sm mb-8">
             You already have a pending Creator request. Please wait for admin
             review.
           </p>
           <Link
             to="/dashboard"
-            className="btn bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none w-full"
+            className="btn !bg-[#625FA3] text-white hover:!bg-[#4f4d8a] border-none w-full"
           >
             Go to Dashboard
           </Link>
@@ -257,30 +259,34 @@ const BecomeCreator = () => {
   }
 
   return (
-    <div className="w-full max-w-2xl  mx-auto py-10 px-4">
-      <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-2">
+    <div className="w-full max-w-2xl mx-auto py-10 px-4">
+      <h2 className="text-xl md:text-2xl font-bold text-base-content mb-2">
         Become a Creator
       </h2>
-      <p className="text-gray-400 text-sm mb-6">
+      <p className="text-base-content/50 text-sm mb-6">
         Pay a one-time fee of{" "}
         <span className="text-[#625FA3] font-semibold">$100</span> to unlock
         Creator privileges and start hosting your own contests.
       </p>
 
-      <div className="bg-white rounded-2xl border border-[#e5e3f5] shadow-sm p-6 mb-6 h-full overflow-y-auto space-y-4">
-        <h3 className="text-base font-bold text-gray-700 sticky top-0 bg-white pb-2 border-b border-gray-100">
+
+      <div className="bg-base-100 border border-base-300 rounded-2xl shadow-sm p-6 mb-6 h-full overflow-y-auto space-y-4">
+        <h3 className="text-base font-bold text-base-content sticky top-0 bg-base-100 pb-2 border-b border-base-300">
           Terms & Conditions
         </h3>
         {terms.map((term) => (
           <div key={term.title}>
-            <p className="text-sm font-semibold text-gray-700">{term.title}</p>
-            <p className="text-sm text-gray-500 mt-1">{term.body}</p>
+            <p className="text-sm font-semibold text-base-content">
+              {term.title}
+            </p>
+            <p className="text-sm text-base-content/50 mt-1">{term.body}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl border border-[#e5e3f5] shadow-sm p-6">
-        <h3 className="text-base font-bold text-gray-700 mb-4">
+
+      <div className="bg-base-100 border border-base-300 rounded-2xl shadow-sm p-6">
+        <h3 className="text-base font-bold text-base-content mb-4">
           Complete Payment
         </h3>
         <Elements stripe={stripePromise}>

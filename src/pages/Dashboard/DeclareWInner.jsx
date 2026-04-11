@@ -10,6 +10,7 @@ const DeclareWinner = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [selectedContest, setSelectedContest] = useState(null);
+  const navigate = useNavigate();
 
   const { data: contests = [], isLoading: contestsLoading } = useQuery({
     queryKey: ["creatorContests", user?.email],
@@ -61,10 +62,7 @@ const DeclareWinner = () => {
       confirmButtonText: "Yes, declare!",
     }).then((result) => {
       if (result.isConfirmed) {
-        winnerMutation.mutate({
-          id: sub._id,
-          contestId: sub.contestId,
-        });
+        winnerMutation.mutate({ id: sub._id, contestId: sub.contestId });
       }
     });
   };
@@ -75,7 +73,7 @@ const DeclareWinner = () => {
     if (status === "rejected") return "bg-red-100 text-red-600";
     return "bg-gray-100 text-gray-600";
   };
-  const navigate = useNavigate();
+
   if (contestsLoading) {
     return (
       <div className="w-full flex justify-center py-20">
@@ -86,34 +84,39 @@ const DeclareWinner = () => {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-base-content">
           Declare Winner
         </h2>
-        <button onClick={() => navigate(-1)} className="btn">
+        <button
+          onClick={() => navigate(-1)}
+          className="btn btn-sm !bg-[#625FA3] text-white border-none hover:!bg-[#4f4d8a]"
+        >
           Back
         </button>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl border border-[#e5e3f5] shadow-sm overflow-hidden">
+        {/* Contests list */}
+        <div className="bg-base-100 rounded-2xl border border-base-300 shadow-sm overflow-hidden">
           <div className="bg-[#625FA3] text-white px-5 py-3">
             <h3 className="font-semibold text-sm">My Contests</h3>
           </div>
 
           {contests.length === 0 ? (
-            <div className="text-center py-10 text-gray-400 text-sm">
+            <div className="text-center py-10 text-base-content/40 text-sm">
               You haven't created any contests yet.
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-base-200">
               {contests.map((contest) => (
                 <div
                   key={contest._id}
                   onClick={() => setSelectedContest(contest)}
-                  className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-[#f5f4fc] transition-colors ${
+                  className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-base-200 transition-colors ${
                     selectedContest?._id === contest._id
-                      ? "bg-[#f5f4fc] border-l-4 border-[#625FA3]"
+                      ? "bg-base-200 border-l-4 border-[#625FA3]"
                       : ""
                   }`}
                 >
@@ -123,10 +126,10 @@ const DeclareWinner = () => {
                     className="w-12 h-10 rounded-lg object-cover flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-700 text-sm truncate">
+                    <p className="font-medium text-base-content text-sm truncate">
                       {contest.name}
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-base-content/50">
                       {contest.contestType}
                     </p>
                   </div>
@@ -141,7 +144,8 @@ const DeclareWinner = () => {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl border border-[#e5e3f5] shadow-sm overflow-hidden">
+        {/* Submissions list */}
+        <div className="bg-base-100 rounded-2xl border border-base-300 shadow-sm overflow-hidden">
           <div className="bg-[#625FA3] text-white px-5 py-3 flex items-center justify-between">
             <h3 className="font-semibold text-sm">
               {selectedContest
@@ -158,7 +162,7 @@ const DeclareWinner = () => {
           </div>
 
           {!selectedContest ? (
-            <div className="text-center py-20 text-gray-400 text-sm">
+            <div className="text-center py-20 text-base-content/40 text-sm">
               Click a contest on the left to see its participants.
             </div>
           ) : submissionsLoading ? (
@@ -166,11 +170,11 @@ const DeclareWinner = () => {
               <span className="loading loading-spinner loading-md"></span>
             </div>
           ) : submissions.length === 0 ? (
-            <div className="text-center py-20 text-gray-400 text-sm">
+            <div className="text-center py-20 text-base-content/40 text-sm">
               No participants yet for this contest.
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-base-200">
               {submissions.map((sub) => (
                 <div key={sub._id} className="flex items-center gap-3 p-4">
                   <img
@@ -179,11 +183,13 @@ const DeclareWinner = () => {
                     className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-700 text-sm">
+                    <p className="font-medium text-base-content text-sm">
                       {sub.userName}
                     </p>
-                    <p className="text-xs text-gray-400">{sub.userEmail}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-base-content/50">
+                      {sub.userEmail}
+                    </p>
+                    <p className="text-xs text-base-content/50">
                       {new Date(sub.submittedAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -201,7 +207,7 @@ const DeclareWinner = () => {
                         selectedContest.status !== "allowed" ||
                         winnerMutation.isPending
                       }
-                      className="btn btn-xs bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none disabled:opacity-40"
+                      className="btn btn-xs !bg-[#625FA3] text-white hover:!bg-[#4f4d8a] border-none disabled:opacity-40"
                     >
                       {sub.winner ? "Winner" : "Declare Winner"}
                     </button>

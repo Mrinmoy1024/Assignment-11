@@ -250,7 +250,7 @@ const AddContest = () => {
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-[#e5e3f5] p-6">
+      <div className="bg-base-100 rounded-2xl shadow-sm border border-[#e5e3f5] p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-xs text-gray-500 mb-1 block">
@@ -456,7 +456,7 @@ const AddContest = () => {
               value={user?.email || ""}
               readOnly
               disabled
-              className="input input-bordered w-full bg-gray-50 text-gray-500 cursor-not-allowed"
+              className="input input-bordered w-full bg-base-100 text-gray-500 cursor-not-allowed"
             />
           </div>
 
@@ -467,7 +467,7 @@ const AddContest = () => {
               value="Pending Review"
               readOnly
               disabled
-              className="input input-bordered w-full bg-gray-50 text-yellow-600 cursor-not-allowed font-medium"
+              className="input input-bordered w-full bg-base-100 text-yellow-600 cursor-not-allowed font-medium"
             />
           </div>
 

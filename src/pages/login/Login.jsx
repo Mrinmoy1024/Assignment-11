@@ -18,7 +18,7 @@ const Login = () => {
   const saveToken = async (email) => {
     try {
       console.log("Saving token for:", email);
-      const { data } = await axios.post("http://localhost:3000/jwt", { email });
+      const { data } = await axios.post("https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/jwt", { email });
       console.log("Token received:", data.token);
       localStorage.setItem("token", data.token);
     } catch (err) {
@@ -55,7 +55,7 @@ const Login = () => {
       const { email } = result.user;
 
       try {
-        await axios.get(`http://localhost:3000/users/check?email=${email}`);
+        await axios.get(`https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/users/check?email=${email}`);
 
         toast.error("No account found. Please sign up first.");
         await signOut(auth);
@@ -63,7 +63,7 @@ const Login = () => {
         return;
       } catch (err) {
         if (err.response?.status === 409) {
-          const { data } = await axios.post("http://localhost:3000/jwt", {
+          const { data } = await axios.post("https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/jwt", {
             email,
           });
           localStorage.setItem("token", data.token);
@@ -88,10 +88,8 @@ const Login = () => {
   if (loading) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center"
-        style={{
-          background: "linear-gradient(90deg, #625FA3, #C15B9C, #6EB18E)",
-        }}
+        className="min-h-screen flex items-center justify-center back"
+      
       >
         <span className="loading loading-spinner loading-lg text-white" />
       </div>
@@ -100,10 +98,8 @@ const Login = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{
-        background: "linear-gradient(90deg, #625FA3, #C15B9C, #6EB18E)",
-      }}
+      className="min-h-screen flex items-center justify-center px-4 back"
+    
     >
       <div className="w-full max-w-sm bg-[#721f75] rounded-2xl p-8 border border-[#5f115f]">
         <h1 className="text-2xl font-bold text-white text-center mb-1">

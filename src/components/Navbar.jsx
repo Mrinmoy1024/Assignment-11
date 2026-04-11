@@ -3,13 +3,14 @@ import { Navigate, NavLink, useNavigate } from "react-router";
 import logo from "../assets/logo1.png";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
-
-
+import useTheme from "../Hooks/useTheme";
+import { Moon, Sun } from "lucide-react";
 
 const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const handleLogout = () => {
     signOutUser()
       .then(() => {
@@ -92,7 +93,9 @@ const Navbar = () => {
 
       <div className="flex-1 flex justify-end">
         <div className="navbar-end flex items-center gap-3">
-          
+          <button onClick={toggleTheme} className="btn btn-ghost btn-circle">
+            {theme === "light" ? <Moon /> : <Sun size={20} />}
+          </button>
           {user ? (
             <div className="relative">
               <img
@@ -132,13 +135,12 @@ const Navbar = () => {
           ) : (
             <div className="flex items-center gap-2">
               <NavLink to="/login">
-                <button className="btn text-black  hover:bg-[#bd0e97]">
+                <button className="btn bg-base-200 text-base-content border border-base-300 hover:bg-[#C15B9C] hover:text-white hover:border-[#C15B9C] transition">
                   Log In
                 </button>
               </NavLink>
-
               <NavLink to="/sign-up">
-                <button className="btn  text-black hover:bg-purple-700">
+                <button className="btn !bg-[#C15B9C] text-white border-none hover:!bg-[#a84d87] transition">
                   Sign Up
                 </button>
               </NavLink>

@@ -16,7 +16,7 @@ const StarRating = ({ value, onChange }) => {
           className={`w-7 h-7 cursor-pointer transition-colors ${
             star <= (hovered || value)
               ? "text-yellow-400 fill-yellow-400"
-              : "text-gray-300"
+              : "text-base-content/30"
           }`}
           onMouseEnter={() => onChange && setHovered(star)}
           onMouseLeave={() => onChange && setHovered(0)}
@@ -36,7 +36,7 @@ const Testimonials = () => {
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["reviews"],
     queryFn: async () => {
-      const { data } = await axios.get("http://localhost:3000/reviews");
+      const { data } = await axios.get("https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/reviews");
       return data;
     },
   });
@@ -45,7 +45,7 @@ const Testimonials = () => {
     queryKey: ["hasReviewed", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
-      const { data } = await axios.get("http://localhost:3000/reviews");
+      const { data } = await axios.get("https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/reviews");
       return data.some((r) => r.userEmail === user.email);
     },
   });
@@ -89,21 +89,21 @@ const Testimonials = () => {
   }
 
   return (
-    <section className="w-full py-16 px-4 back">
+    <section className="w-full back py-16 px-4 bg-base-200">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">
+          <h2 className="text-3xl md:text-4xl font-bold text-base-content mb-3">
             What Our Users Say
           </h2>
-          <p className="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
+          <p className="text-base-content/50 text-sm md:text-base max-w-xl mx-auto">
             Real experiences from our community of contestants and creators.
           </p>
           <div className="flex items-center justify-center gap-2 mt-4">
             <StarRating value={Math.round(averageRating)} />
-            <span className="text-2xl font-bold text-gray-700">
+            <span className="text-2xl font-bold text-base-content">
               {averageRating}
             </span>
-            <span className="text-gray-400 text-sm">
+            <span className="text-base-content/40 text-sm">
               ({reviews.length} reviews)
             </span>
           </div>
@@ -113,36 +113,38 @@ const Testimonials = () => {
           {reviews.map((r) => (
             <div
               key={r._id}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-[#e5e3f5] hover:shadow-md transition-shadow"
+              className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-300 hover:shadow-md transition-shadow"
             >
               <div className="flex items-center gap-3 mb-4">
                 <img
                   src={r.userPhoto || "https://i.ibb.co/MgsTCcv/avater.jpg"}
                   alt={r.userName}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-[#e5e3f5]"
+                  className="w-12 h-12 rounded-full object-cover border-2 border-base-300"
                 />
                 <div>
-                  <p className="font-semibold text-gray-700">{r.userName}</p>
-                  <p className="text-xs text-gray-400">
+                  <p className="font-semibold text-base-content">
+                    {r.userName}
+                  </p>
+                  <p className="text-xs text-base-content/40">
                     {new Date(r.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>
               <StarRating value={r.rating} />
-              <p className="text-gray-500 text-sm mt-3 leading-relaxed">
+              <p className="text-base-content/60 text-sm mt-3 leading-relaxed">
                 "{r.review}"
               </p>
             </div>
           ))}
         </div>
 
-        <div className="max-w-xl mx-auto bg-white rounded-2xl p-8 shadow-sm border border-[#e5e3f5]">
-          <h3 className="text-xl font-bold text-gray-700 mb-6 text-center">
+        <div className="max-w-xl mx-auto bg-base-100 rounded-2xl p-8 shadow-sm border border-base-300">
+          <h3 className="text-xl font-bold text-base-content mb-6 text-center">
             Share Your Experience
           </h3>
 
           {!user ? (
-            <p className="text-center text-gray-400 text-sm">
+            <p className="text-center text-base-content/50 text-sm">
               Please{" "}
               <a
                 href="/login"
@@ -164,22 +166,22 @@ const Testimonials = () => {
                 <img
                   src={user.photoURL || "https://i.ibb.co/MgsTCcv/avater.jpg"}
                   alt={user.displayName}
-                  className="w-10 h-10 rounded-full object-cover border-2 border-[#e5e3f5]"
+                  className="w-10 h-10 rounded-full object-cover border-2 border-base-300"
                 />
-                <p className="font-semibold text-gray-700">
+                <p className="font-semibold text-base-content">
                   {user.displayName}
                 </p>
               </div>
 
               <div>
-                <label className="text-xs text-gray-500 mb-2 block">
+                <label className="text-xs text-base-content/50 mb-2 block">
                   Your Rating
                 </label>
                 <StarRating value={rating} onChange={setRating} />
               </div>
 
               <div>
-                <label className="text-xs text-gray-500 mb-1 block">
+                <label className="text-xs text-base-content/50 mb-1 block">
                   Your Review
                 </label>
                 <textarea
@@ -187,14 +189,14 @@ const Testimonials = () => {
                   onChange={(e) => setReview(e.target.value)}
                   placeholder="Share your experience with the platform..."
                   rows={4}
-                  className="textarea textarea-bordered w-full"
+                  className="w-full bg-base-200 border border-base-300 focus:border-[#C15B9C] text-base-content placeholder:text-base-content/30 rounded-lg px-4 py-2.5 text-sm outline-none transition resize-none"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={mutation.isPending}
-                className="btn w-full bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none"
+                className="btn w-full !bg-[#625FA3] text-white hover:!bg-[#4f4d8a] border-none"
               >
                 {mutation.isPending ? "Submitting..." : "Submit Review"}
               </button>

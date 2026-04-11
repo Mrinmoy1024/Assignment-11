@@ -4,7 +4,7 @@ import { Clock } from "lucide-react";
 const RequestPending = () => {
   return (
     <div className="w-full flex flex-col items-center justify-center py-20 px-4 text-center">
-      <div className="bg-white rounded-2xl border border-[#e5e3f5] shadow-sm p-10 max-w-md w-full">
+      <div className="bg-base-100 rounded-2xl border border-[#e5e3f5] shadow-sm p-10 max-w-md w-full">
         <div className="flex justify-center mb-6">
           <div className="w-20 h-20 rounded-full bg-yellow-50 flex items-center justify-center">
             <Clock className="w-10 h-10 text-yellow-500" />

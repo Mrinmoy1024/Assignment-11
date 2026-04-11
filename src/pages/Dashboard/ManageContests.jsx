@@ -8,6 +8,7 @@ import { useNavigate } from "react-router";
 const ManageContests = () => {
   const queryClient = useQueryClient();
   const [editContest, setEditContest] = useState(null);
+  const navigate = useNavigate();
 
   const { data: contests = [], isLoading } = useQuery({
     queryKey: ["contests"],
@@ -39,7 +40,7 @@ const ManageContests = () => {
     },
     onError: () => toast.error("Failed to update contest"),
   });
-  const navigate = useNavigate();
+
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -51,9 +52,7 @@ const ManageContests = () => {
       confirmButtonText: "Yes, delete!",
       cancelButtonText: "Cancel",
     }).then((result) => {
-      if (result.isConfirmed) {
-        deleteMutation.mutate(id);
-      }
+      if (result.isConfirmed) deleteMutation.mutate(id);
     });
   };
 
@@ -80,6 +79,9 @@ const ManageContests = () => {
     return "bg-gray-100 text-gray-600";
   };
 
+  const inputClass =
+    "w-full bg-base-200 border border-base-300 focus:border-[#C15B9C] text-base-content placeholder:text-base-content/30 rounded-lg px-4 py-2.5 text-sm outline-none transition";
+
   if (isLoading) {
     return (
       <div className="w-full flex justify-center py-20">
@@ -90,16 +92,21 @@ const ManageContests = () => {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
+  
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-base-content">
           Manage Contests ({contests.length})
         </h2>
-        <button className="btn" onClick={() => navigate(-1)}>
+        <button
+          className="btn btn-sm !bg-[#625FA3] text-white border-none hover:!bg-[#4f4d8a]"
+          onClick={() => navigate(-1)}
+        >
           Back
         </button>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-[#e5e3f5] shadow-sm">
+   
+      <div className="overflow-x-auto rounded-2xl border border-base-300 shadow-sm">
         <table className="table w-full">
           <thead className="bg-[#625FA3] text-white">
             <tr>
@@ -118,7 +125,7 @@ const ManageContests = () => {
             {contests.map((contest, index) => (
               <tr
                 key={contest._id}
-                className="hover:bg-[#f5f4fc] text-black transition-colors"
+                className="hover:bg-base-200 text-base-content transition-colors"
               >
                 <td>{index + 1}</td>
                 <td>
@@ -128,13 +135,21 @@ const ManageContests = () => {
                     className="w-14 h-10 rounded-lg object-cover"
                   />
                 </td>
-                <td className="font-medium text-gray-700 max-w-[150px] truncate">
+                <td className="font-medium text-base-content max-w-[150px] truncate">
                   {contest.name}
                 </td>
-                <td className="text-black text-sm">{contest.contestType}</td>
-                <td className="text-black text-sm">${contest.price}</td>
-                <td className="text-black text-sm">${contest.prizeMoney}</td>
-                <td className="text-black text-sm">{contest.deadline}</td>
+                <td className="text-base-content/70 text-sm">
+                  {contest.contestType}
+                </td>
+                <td className="text-base-content/70 text-sm">
+                  ${contest.price}
+                </td>
+                <td className="text-base-content/70 text-sm">
+                  ${contest.prizeMoney}
+                </td>
+                <td className="text-base-content/70 text-sm">
+                  {contest.deadline}
+                </td>
                 <td>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${statusColor(contest.status)}`}
@@ -145,7 +160,7 @@ const ManageContests = () => {
                 <td className="space-x-2">
                   <button
                     onClick={() => setEditContest(contest)}
-                    className="btn btn-sm bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none"
+                    className="btn btn-sm !bg-[#625FA3] text-white hover:!bg-[#4f4d8a] border-none"
                   >
                     Update
                   </button>
@@ -164,27 +179,29 @@ const ManageContests = () => {
       </div>
 
       {editContest && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-          <div className="back rounded-2xl p-6 w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-bold text-gray-700 mb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-base-100 border border-base-300 rounded-2xl p-6 w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-bold text-base-content mb-4">
               Update Contest
             </h3>
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-black mb-1 block">Name</label>
+                <label className="text-xs text-base-content/50 mb-1 block">
+                  Name
+                </label>
                 <input
                   type="text"
                   value={editContest.name}
                   onChange={(e) =>
                     setEditContest({ ...editContest, name: e.target.value })
                   }
-                  className="input input-bordered w-full"
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label className="text-xs text-black mb-1 block">
+                <label className="text-xs text-base-content/50 mb-1 block">
                   Contest Type
                 </label>
                 <input
@@ -196,13 +213,13 @@ const ManageContests = () => {
                       contestType: e.target.value,
                     })
                   }
-                  className="input input-bordered w-full"
+                  className={inputClass}
                 />
               </div>
 
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <label className="text-xs text-black mb-1 block">
+                  <label className="text-xs text-base-content/50 mb-1 block">
                     Price ($)
                   </label>
                   <input
@@ -211,11 +228,11 @@ const ManageContests = () => {
                     onChange={(e) =>
                       setEditContest({ ...editContest, price: e.target.value })
                     }
-                    className="input input-bordered w-full"
+                    className={inputClass}
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="text-xs text-black mb-1 block">
+                  <label className="text-xs text-base-content/50 mb-1 block">
                     Prize Money ($)
                   </label>
                   <input
@@ -227,13 +244,13 @@ const ManageContests = () => {
                         prizeMoney: e.target.value,
                       })
                     }
-                    className="input input-bordered w-full"
+                    className={inputClass}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-black mb-1 block">
+                <label className="text-xs text-base-content/50 mb-1 block">
                   Deadline
                 </label>
                 <input
@@ -242,18 +259,20 @@ const ManageContests = () => {
                   onChange={(e) =>
                     setEditContest({ ...editContest, deadline: e.target.value })
                   }
-                  className="input input-bordered w-full"
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label className="text-xs text-black mb-1 block">Status</label>
+                <label className="text-xs text-base-content/50 mb-1 block">
+                  Status
+                </label>
                 <select
                   value={editContest.status}
                   onChange={(e) =>
                     setEditContest({ ...editContest, status: e.target.value })
                   }
-                  className="select select-bordered w-full"
+                  className={`${inputClass} cursor-pointer`}
                 >
                   <option value="allowed">Allowed</option>
                   <option value="pending">Pending</option>
@@ -262,7 +281,7 @@ const ManageContests = () => {
               </div>
 
               <div>
-                <label className="text-xs text-black mb-1 block">
+                <label className="text-xs text-base-content/50 mb-1 block">
                   Description
                 </label>
                 <textarea
@@ -273,13 +292,13 @@ const ManageContests = () => {
                       description: e.target.value,
                     })
                   }
-                  className="textarea textarea-bordered w-full"
+                  className={`${inputClass} resize-none`}
                   rows={3}
                 />
               </div>
 
               <div>
-                <label className="text-xs text-black mb-1 block">
+                <label className="text-xs text-base-content/50 mb-1 block">
                   Task Instruction
                 </label>
                 <textarea
@@ -290,22 +309,22 @@ const ManageContests = () => {
                       taskInstruction: e.target.value,
                     })
                   }
-                  className="textarea textarea-bordered w-full"
+                  className={`${inputClass} resize-none`}
                   rows={3}
                 />
               </div>
             </div>
 
-            <div className="flex gap-2  justify-end mt-5">
+            <div className="flex gap-2 justify-end mt-5">
               <button
                 onClick={() => setEditContest(null)}
-                className="btn btn-sm "
+                className="btn btn-sm bg-base-200 border border-base-300 text-base-content hover:bg-base-300"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdate}
-                className="btn btn-sm  bg-[#625FA3] text-black hover:bg-[#4f4d8a] border-none"
+                className="btn btn-sm !bg-[#625FA3] text-white hover:!bg-[#4f4d8a] border-none"
                 disabled={updateMutation.isPending}
               >
                 {updateMutation.isPending ? "Saving..." : "Save Changes"}

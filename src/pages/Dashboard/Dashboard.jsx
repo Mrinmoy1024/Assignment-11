@@ -17,27 +17,37 @@ import {
   LogOut,
   Gamepad2Icon,
   Flag,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { Link, useNavigate, Outlet, useMatch } from "react-router";
 import Footer from "../../components/Footer";
 import { toast } from "react-toastify";
+import useTheme from "../../Hooks/useTheme";
 
 const StatCard = ({ icon: Icon, label, value, color, to }) => (
   <Link
     to={to}
-    className="bg-white rounded-2xl flex flex-col items-center justify-center gap-3 shadow-sm border border-[#e5e3f5] hover:shadow-xl hover:scale-105 transition-all duration-300 text-center p-6"
+    className="bg-base-100 dark:bg-[#1c1c26] rounded-2xl flex flex-col items-center justify-center gap-3 hover:scale-105 transition-all duration-300 text-center p-6 border border-[#e5e3f5] dark:border-[#2a2a38] shadow-sm hover:shadow-xl"
   >
     <div
       className="w-14 h-14 md:w-20 md:h-20 rounded-2xl flex items-center justify-center"
-      style={{ background: `${color}18` }}
+      style={{ background: `${color}20` }}
     >
       <Icon className="w-7 h-7 md:w-10 md:h-10" style={{ color }} />
     </div>
     <div className="flex flex-col items-center gap-1">
-      <p className="text-sm md:text-base text-gray-400 font-medium">{label}</p>
-      <p className="text-2xl md:text-4xl font-bold text-gray-800">
+      <p className="text-sm md:text-base font-medium text-gray-500 dark:text-gray-400">
+        {label}
+      </p>
+      <p className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white">
         {value ?? "—"}
       </p>
+
+      <div
+        className="h-1 w-10 rounded-full mt-1"
+        style={{ background: color }}
+      />
     </div>
   </Link>
 );
@@ -174,6 +184,7 @@ const Dashboard = () => {
   const isChildRoute = useMatch("/dashboard/:child");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const { theme, toggleTheme } = useTheme();
 
   const handleLogout = async () => {
     await signOutUser();
@@ -235,7 +246,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col gap-4 md:gap-6 overflow-visible px-3 md:px-6 py-4 md:py-6">
-      <div className="bg-gradient-to-r from-purple-600 to-pink-500 text-white p-4 md:p-6 rounded-2xl relative overflow-visible">
+      <div className="dash text-white p-4 md:p-6 rounded-2xl relative overflow-visible">
         <div className="flex items-center gap-3 md:gap-4 relative z-10">
           <div className="relative" ref={dropdownRef}>
             <img
@@ -264,7 +275,7 @@ const Dashboard = () => {
                 </Link>
                 <Link to="/all-contests">
                   <button className="flex items-center gap-2 p-3 w-full hover:bg-gray-100 text-sm cursor-pointer">
-                    <Gamepad2Icon /> All Contests
+                    <Gamepad2Icon size={16} /> All Contests
                   </button>
                 </Link>
                 <button
@@ -276,12 +287,23 @@ const Dashboard = () => {
               </div>
             )}
           </div>
+
           <div>
             <h2 className="text-lg md:text-xl font-bold">
               {user?.displayName}
             </h2>
             <p className="text-xs md:text-sm capitalize opacity-80">{role}</p>
           </div>
+
+          <button
+            onClick={toggleTheme}
+            className="ml-auto p-2 rounded-xl bg-white/20 hover:bg-white/30 transition"
+            title={
+              theme === "light" ? "Switch to dark mode" : "Switch to light mode"
+            }
+          >
+            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+          </button>
         </div>
       </div>
 

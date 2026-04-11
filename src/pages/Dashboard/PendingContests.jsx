@@ -7,6 +7,7 @@ import { useNavigate } from "react-router";
 
 const PendingContests = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: contests = [], isLoading } = useQuery({
     queryKey: ["pendingContests"],
@@ -67,89 +68,97 @@ const PendingContests = () => {
       if (result.isConfirmed) rejectMutation.mutate(id);
     });
   };
-  const navigate = useNavigate();
 
   if (isLoading) {
     return (
       <div className="w-full flex justify-center py-20">
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="loading loading-spinner loading-lg text-[#625FA3]"></span>
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
+    <div className="w-full pb-10">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-100">
           Pending Contests ({contests.length})
         </h2>
-        <button className="btn" onClick={() => navigate(-1)}>
-          Back
+        <button
+          onClick={() => navigate(-1)}
+          className="px-4 py-2 rounded-lg text-sm font-medium bg-[#1e2130] border border-[#2a2d3e] text-gray-300 hover:bg-[#252836] transition"
+        >
+          Go Back
         </button>
       </div>
+
       {contests.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
+        <div className="text-center py-20 text-gray-500">
           No pending contests at the moment.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-[#e5e3f5] shadow-sm">
-          <table className="table w-full">
-            <thead className="bg-[#625FA3] text-white">
+        <div className="overflow-x-auto rounded-2xl border border-[#2a2d3e] shadow-sm">
+          <table className="w-full text-sm">
+            <thead className="bg-[#625FA3] text-white text-xs uppercase tracking-wider">
               <tr>
-                <th>#</th>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Price</th>
-                <th>Prize</th>
-                <th>Deadline</th>
-                <th>Created By</th>
-                <th>Actions</th>
+                <th className="px-4 py-3 text-left">#</th>
+                <th className="px-4 py-3 text-left">Image</th>
+                <th className="px-4 py-3 text-left">Name</th>
+                <th className="px-4 py-3 text-left">Type</th>
+                <th className="px-4 py-3 text-left">Price</th>
+                <th className="px-4 py-3 text-left">Prize</th>
+                <th className="px-4 py-3 text-left">Deadline</th>
+                <th className="px-4 py-3 text-left">Created By</th>
+                <th className="px-4 py-3 text-left">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-[#2a2d3e] bg-[#1e2130]">
               {contests.map((contest, index) => (
                 <tr
                   key={contest._id}
-                  className="hover:bg-[#8f0b79] transition-colors"
+                  className="hover:bg-[#252836] transition-colors"
                 >
-                  <td>{index + 1}</td>
-                  <td>
+                  <td className="px-4 py-3 text-gray-400">{index + 1}</td>
+                  <td className="px-4 py-3">
                     <img
                       src={contest.image || "https://placehold.co/60x40"}
                       alt={contest.name}
                       className="w-14 h-10 rounded-lg object-cover"
                     />
                   </td>
-                  <td className="font-medium text-black max-w-[150px] truncate">
+                  <td className="px-4 py-3 font-medium text-gray-100 max-w-[150px] truncate">
                     {contest.name}
                   </td>
-                  <td className="text-black text-sm">
+                  <td className="px-4 py-3 text-gray-400">
                     {contest.contestType}
                   </td>
-                  <td className="text-black text-sm">${contest.price}</td>
-                  <td className="text-black text-sm">
+                  <td className="px-4 py-3 text-gray-400">${contest.price}</td>
+                  <td className="px-4 py-3 text-gray-400">
                     ${contest.prizeMoney}
                   </td>
-                  <td className="text-black text-sm">{contest.deadline}</td>
-                  <td className="text-black text-sm truncate max-w-[140px]">
+                  <td className="px-4 py-3 text-gray-400 whitespace-nowrap">
+                    {contest.deadline}
+                  </td>
+                  <td className="px-4 py-3 text-gray-400 truncate max-w-[140px]">
                     {contest.createdBy}
                   </td>
-                  <td className="space-x-2">
-                    <button
-                      onClick={() => handleApprove(contest._id, contest.name)}
-                      disabled={approveMutation.isPending}
-                      className="btn btn-sm bg-[#625FA3] text-white hover:bg-[#4f4d8a] border-none disabled:opacity-40"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => handleReject(contest._id, contest.name)}
-                      disabled={rejectMutation.isPending}
-                      className="btn btn-sm bg-red-500 text-white hover:bg-red-600 border-none disabled:opacity-40"
-                    >
-                      Reject
-                    </button>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleApprove(contest._id, contest.name)}
+                        disabled={approveMutation.isPending}
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#625FA3] hover:bg-[#4f4d8a] text-white transition disabled:opacity-40"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => handleReject(contest._id, contest.name)}
+                        disabled={rejectMutation.isPending}
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-500/20 hover:bg-red-500/30 text-red-400 transition disabled:opacity-40"
+                      >
+                        Reject
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

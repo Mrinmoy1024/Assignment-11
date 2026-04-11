@@ -57,7 +57,7 @@ const Profile = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-[#e5e3f5] p-6">
+      <div className="bg-base-100 rounded-2xl shadow-sm border border-[#e5e3f5] p-6">
         <div className="flex flex-col items-center gap-3 mb-6">
           <img
             src={

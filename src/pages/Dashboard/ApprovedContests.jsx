@@ -7,6 +7,7 @@ import { useNavigate } from "react-router";
 
 const ApprovedContests = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: contests = [], isLoading } = useQuery({
     queryKey: ["approvedContests"],
@@ -41,7 +42,6 @@ const ApprovedContests = () => {
       if (result.isConfirmed) deleteMutation.mutate(id);
     });
   };
-  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -53,21 +53,25 @@ const ApprovedContests = () => {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-base-content">
           Approved Contests ({contests.length})
         </h2>
-        <button className="btn" onClick={() => navigate(-1)}>
+        <button
+          className="btn btn-sm !bg-[#625FA3] text-white border-none hover:!bg-[#4f4d8a]"
+          onClick={() => navigate(-1)}
+        >
           Back
         </button>
       </div>
 
       {contests.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
+        <div className="text-center py-20 text-base-content/40">
           No approved contests yet.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-[#e5e3f5] shadow-sm">
+        <div className="overflow-x-auto rounded-2xl border border-base-300 shadow-sm">
           <table className="table w-full">
             <thead className="bg-[#625FA3] text-white">
               <tr>
@@ -86,9 +90,9 @@ const ApprovedContests = () => {
               {contests.map((contest, index) => (
                 <tr
                   key={contest._id}
-                  className="hover:bg-[#da0a83] transition-colors"
+                  className="hover:bg-base-200 transition-colors"
                 >
-                  <td>{index + 1}</td>
+                  <td className="text-base-content">{index + 1}</td>
                   <td>
                     <img
                       src={contest.image || "https://placehold.co/60x40"}
@@ -96,14 +100,22 @@ const ApprovedContests = () => {
                       className="w-14 h-10 rounded-lg object-cover"
                     />
                   </td>
-                  <td className="font-medium text-black max-w-[150px] truncate">
+                  <td className="font-medium text-base-content max-w-[150px] truncate">
                     {contest.name}
                   </td>
-                  <td className="text-black text-sm">{contest.contestType}</td>
-                  <td className="text-black text-sm">${contest.price}</td>
-                  <td className="text-black text-sm">${contest.prizeMoney}</td>
-                  <td className="text-black text-sm">{contest.deadline}</td>
-                  <td className="text-black text-sm truncate max-w-[140px]">
+                  <td className="text-base-content/70 text-sm">
+                    {contest.contestType}
+                  </td>
+                  <td className="text-base-content/70 text-sm">
+                    ${contest.price}
+                  </td>
+                  <td className="text-base-content/70 text-sm">
+                    ${contest.prizeMoney}
+                  </td>
+                  <td className="text-base-content/70 text-sm">
+                    {contest.deadline}
+                  </td>
+                  <td className="text-base-content/70 text-sm truncate max-w-[140px]">
                     {contest.createdBy}
                   </td>
                   <td>
