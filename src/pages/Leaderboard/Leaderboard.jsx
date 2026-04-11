@@ -25,9 +25,12 @@ const Leaderboard = () => {
     );
   }
 
-  const top3 = leaders.slice(0, 3);
-  const others = leaders.slice(3);
-
+  const top3 = [...leaders]
+    .sort((a, b) => b.prizeMoney - a.prizeMoney)
+    .slice(0, 3);
+  const others = [...leaders]
+    .sort((a, b) => b.prizeMoney - a.prizeMoney)
+    .slice(3);
   const medals = ["🥇", "🥈", "🥉"];
 
   return (
@@ -43,7 +46,6 @@ const Leaderboard = () => {
           </div>
         ) : (
           <>
-     
             <div className="flex flex-wrap justify-center gap-6 mb-12">
               {top3.map((leader, index) => (
                 <div
@@ -84,7 +86,6 @@ const Leaderboard = () => {
               ))}
             </div>
 
-          
             {others.length > 0 && (
               <div className="bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden shadow-xl border border-white/20">
                 <table className="w-full">
