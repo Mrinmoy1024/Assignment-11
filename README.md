@@ -1,16 +1,47 @@
-# React + Vite
+# Contest Carnival 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, full-featured contest platform built with React, Firebase, and Stripe. Browse, enter, and manage contests with a smooth and responsive UI.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+| Category | Technology |
+|---|---|
+| Framework | React 19 + Vite 8 |
+| Styling | Tailwind CSS v4 + DaisyUI v5 |
+| Routing | React Router v7 |
+| State / Data | TanStack React Query v5 |
+| Auth & DB | Firebase v12 |
+| Payments | Stripe + React Stripe.js |
+| Forms | React Hook Form |
+| Charts | Recharts |
+| Animations | Motion (Framer Motion) |
+| Notifications | React Toastify + SweetAlert2 |
+| Icons | Lucide React + React Icons |
+| Carousel | Swiper |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+
+## Features
+
+-  **Authentication** — Firebase-powered login, registration, and protected routes
+-  **Contest Browsing** — Browse and filter active contests
+-  **Payments** — Secure contest entry payments via Stripe
+-  **Dashboard** — User and admin dashboards with charts (Recharts)
+-  **Responsive Design** — Mobile-first UI with Tailwind CSS and DaisyUI
+-  **Carousels** — Smooth contest sliders using Swiper
+-  **Notifications** — Toast alerts and modals for user feedback
+-  **Two extra routes** — Testimonial and How it works
+
+
+server-side repository link: https://github.com/Mrinmoy1024/Assignment11-server-
+
+client-side repository link: https://github.com/Mrinmoy1024/Assignment-11
+
+live link: https://contest-carnival-client.vercel.app
+
+admin email: admin@user.com
+admin password: admin-paSS
