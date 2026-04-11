@@ -40,47 +40,47 @@ const RecentWinnerCard = () => {
     );
   }
 
-  const topFiveWinners = winners.slice(0, 5);
+  const topWinners = [...winners]
+    .sort((a, b) => b.prizeMoney - a.prizeMoney)
+    .slice(0, 6);
 
   return (
     <div>
       <div className="text-center text-5xl mt-25 mb-4">Our Recent Winners</div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {topFiveWinners.map(
-          ({ _id, name, contest, prizeMoney, avatar }, index) => (
-            <div
-              key={_id}
-              className="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-xl p-4 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105"
-            >
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <img
-                    src={avatar || `https://i.pravatar.cc/150?img=${_id}`}
-                    alt={name}
-                    className="w-16 h-16 rounded-full border-2 border-white/30 object-cover"
-                  />
-                  {index === 0 && (
-                    <div className="absolute -top-1 -right-1 text-yellow-400">
-                      👑
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-white group-hover:text-[#C15B9C] transition-colors">
-                      {name}
-                    </h3>
-                    <span className="text-xs text-white/40">#{index + 1}</span>
+        {topWinners.map(({ _id, name, contest, prizeMoney, avatar }, index) => (
+          <div
+            key={_id}
+            className="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-xl p-4 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105"
+          >
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <img
+                  src={avatar || `https://i.pravatar.cc/150?img=${_id}`}
+                  alt={name}
+                  className="w-16 h-16 rounded-full border-2 border-white/30 object-cover"
+                />
+                {index === 0 && (
+                  <div className="absolute -top-1 -right-1 text-yellow-400">
+                    👑
                   </div>
-                  <p className="text-white/50 text-sm">{contest}</p>
-                  <p className="text-[#6EB18E] font-bold text-lg">
-                    Money Won: ${prizeMoney?.toLocaleString()}
-                  </p>
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-white group-hover:text-[#C15B9C] transition-colors">
+                    {name}
+                  </h3>
+                  <span className="text-xs text-white/40">#{index + 1}</span>
                 </div>
+                <p className="text-white/50 text-sm">{contest}</p>
+                <p className="text-[#6EB18E] font-bold text-lg">
+                  Money Won: ${prizeMoney?.toLocaleString()}
+                </p>
               </div>
             </div>
-          ),
-        )}
+          </div>
+        ))}
       </div>
     </div>
   );
