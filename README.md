@@ -45,3 +45,6 @@ live link: https://contest-carnival-client.vercel.app
 
 admin email: admin@user.com
 admin password: admin-paSS
+
+creator email: creator@email.com
+creator password: creatorEmail
