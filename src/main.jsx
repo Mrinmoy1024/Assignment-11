@@ -12,7 +12,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <RouterProvider router={router} fallbackElement={<LoadingSpinner />} />
         <ToastContainer></ToastContainer>
       </AuthProvider>
     </QueryClientProvider>

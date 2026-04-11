@@ -36,7 +36,7 @@ const Testimonials = () => {
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["reviews"],
     queryFn: async () => {
-      const { data } = await axios.get("https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/reviews");
+      const { data } = await axios.get("https://contest-carnival-server.vercel.app/reviews");
       return data;
     },
   });
@@ -45,7 +45,7 @@ const Testimonials = () => {
     queryKey: ["hasReviewed", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
-      const { data } = await axios.get("https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/reviews");
+      const { data } = await axios.get("https://contest-carnival-server.vercel.app/reviews");
       return data.some((r) => r.userEmail === user.email);
     },
   });

@@ -5,7 +5,7 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchContests = async () => {
-  const { data } = await axios.get("https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/contest");
+  const { data } = await axios.get("https://contest-carnival-server.vercel.app/contest");
   return Array.isArray(data) ? data : [];
 };
 

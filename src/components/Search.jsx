@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router";
 
-const API_URL = "https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/contest/search";
+const API_URL = "https://contest-carnival-server.vercel.app/contest/search";
 const CONTEST_TYPES = [
   "All",
   "Design",

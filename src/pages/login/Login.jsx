@@ -18,7 +18,7 @@ const Login = () => {
   const saveToken = async (email) => {
     try {
       console.log("Saving token for:", email);
-      const { data } = await axios.post("https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/jwt", { email });
+      const { data } = await axios.post("https://contest-carnival-server.vercel.app/jwt", { email });
       console.log("Token received:", data.token);
       localStorage.setItem("token", data.token);
     } catch (err) {
@@ -55,7 +55,7 @@ const Login = () => {
       const { email } = result.user;
 
       try {
-        await axios.get(`https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/users/check?email=${email}`);
+        await axios.get(`https://contest-carnival-server.vercel.app/users/check?email=${email}`);
 
         toast.error("No account found. Please sign up first.");
         await signOut(auth);
@@ -63,7 +63,7 @@ const Login = () => {
         return;
       } catch (err) {
         if (err.response?.status === 409) {
-          const { data } = await axios.post("https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/jwt", {
+          const { data } = await axios.post("https://contest-carnival-server.vercel.app/jwt", {
             email,
           });
           localStorage.setItem("token", data.token);

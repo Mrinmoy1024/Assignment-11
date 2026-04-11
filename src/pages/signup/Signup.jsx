@@ -27,7 +27,7 @@ const Signup = () => {
   const saveUserToDb = async ({ name, email, photoURL, role }) => {
     try {
       await axios.post(
-        "https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/users",
+        "https://contest-carnival-server.vercel.app/users",
         {
           name,
           email,
@@ -37,15 +37,15 @@ const Signup = () => {
         },
       );
     } catch (error) {
-      // 409 means user already exists — that's fine, just get token
+    
       if (error.response?.status !== 409) {
         throw error;
       }
     }
 
-    // Always get token whether user is new or existing
+
     const { data } = await axios.post(
-      "https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/jwt",
+      "https://contest-carnival-server.vercel.app/jwt",
       { email },
     );
     localStorage.setItem("token", data.token);

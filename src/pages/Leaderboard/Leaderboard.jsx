@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const fetchLeaderboard = async () => {
   const { data } = await axios.get(
-    "https://contest-carnival-server-1bxq19mi1-mtex1024-2836s-projects.vercel.app/leaderboard",
+    "https://contest-carnival-server.vercel.app/leaderboard",
   );
   return data;
 };
