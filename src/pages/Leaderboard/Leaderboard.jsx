@@ -15,7 +15,7 @@ const Leaderboard = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#625FA3] via-[#C15B9C] to-[#6EB18E]">
+      <div className="min-h-screen flex items-center justify-center back">
         <div className="text-white text-xl font-semibold animate-pulse">
           Loading leaderboard...
         </div>
@@ -29,7 +29,7 @@ const Leaderboard = () => {
   const medals = ["🥇", "🥈", "🥉"];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#625FA3] via-[#C15B9C] to-[#6EB18E] py-12 px-4">
+    <div className="min-h-screen back">
       <div className="container mx-auto max-w-6xl">
         <h1 className="text-5xl font-bold text-center text-white mb-12 drop-shadow-lg">
           Leaderboard

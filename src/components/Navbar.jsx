@@ -4,6 +4,8 @@ import logo from "../assets/logo1.png";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 
+
+
 const Navbar = () => {
   const { user, signOutUser } = useContext(AuthContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -90,6 +92,7 @@ const Navbar = () => {
 
       <div className="flex-1 flex justify-end">
         <div className="navbar-end flex items-center gap-3">
+          
           {user ? (
             <div className="relative">
               <img
