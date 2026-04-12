@@ -4,7 +4,7 @@ A modern, full-featured contest platform built with React, Firebase, and Stripe.
 
 ---
 
-## Tech Stack Client - Side
+## Tech Stack - Client Side
 
 | Category      | Technology                   |
 | ------------- | ---------------------------- |
